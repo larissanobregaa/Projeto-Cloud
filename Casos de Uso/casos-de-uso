@@ -1,0 +1,210 @@
+Lista de casos de uso
+
+Caso de Uso 1: Criação de Conta
+Nome: Criação de Conta
+
+Descrição: Permite que um novo usuário crie uma conta no sistema de autorização de transações.
+
+Atores: Usuário, Sistema de Autorização
+
+Pré-condições:
+
+O usuário deve fornecer informações válidas (nome, endereço, dados do cartão, etc.).
+O sistema deve estar operacional.
+Fluxo Principal:
+
+O usuário acessa a interface de criação de conta.
+O sistema solicita as informações necessárias para criar a conta.
+O usuário preenche e submete as informações.
+O sistema valida as informações fornecidas.
+O sistema cria uma nova conta e ativa o cartão de crédito.
+O sistema confirma a criação da conta ao usuário.
+Fluxos Alternativos:
+
+A1: Informações Inválidas
+O usuário fornece informações inválidas ou incompletas.
+O sistema exibe uma mensagem de erro solicitando correção.
+O usuário corrige as informações e tenta novamente.
+Pós-condições:
+
+Uma nova conta foi criada e o cartão de crédito está ativo.
+Requisitos Especiais:
+
+A conta deve ser registrada com um limite inicial predefinido.
+O cartão deve ser ativado automaticamente após a criação da conta.
+
+
+ 
+C02: Autorizar transação
+Descrição
+Autorizar ou rejeitar uma transação de cartão de crédito.
+
+Atores
+Usuário, Sistema de Autorização.
+
+Pré-condições:
+O cartão deve estar ativo
+O sistema deve estar funcionando
+
+Fluxo Principal
+
+O usuário submete uma solicitação de transação com valor, estabelecimento e dados do cartão
+O sistema verifica se cartão está ativo
+O sistema verifica se há limite na conta
+O sistema verifica no histórico se há transações repetidas
+Se todas as verificações forem concluídas, o sistema autoriza a transação e atualiza o saldo da conta.
+Fluxo Alternativo
+
+Se não estiver ativo, o sistema rejeita a transação e envia a mensagem “O cartão não é válido”.
+
+O sistema verifica se o valor da transação é menor que o limite na conta
+Se não tiver limite, o sistema rejeita a transação e envia a mensagem “Limite insuficiente”.
+
+O sistema verifica o histórico de transações para garantir que não há 2 transações semelhantes em um intervalo de 2 minutos.
+Se houver, o sistema rejeita a transação e envia a mensagem “Limite de transações excedido”
+
+Regras de Negócio
+O sistema deve registrar e manter um histórico de transações para validação de regras
+ 
+C03: Desativar conta
+Descrição
+Permitir que o administrador ou usuário desative uma conta e o cartão associado
+
+Atores
+Administrador, Usuário, Sistema de Autorização
+
+Pré-condições
+O usuário ou administrador deve estar autenticado
+A conta deve existir e estar ativa
+
+Fluxo Principal
+O usuário ou administrador acessa a interface de desativação de conta
+Sistema solicita a confirmação de desativação da conta
+O usuário ou administrador confirma a desativação da conta
+O sistema desativa a conta e o cartão de crédito associado
+O sistema confirma a desativação da conta e notifica o usuário ou administrador
+
+Fluxo Alternativo
+
+Caso o sistema não encontre a conta para desativação
+
+Enviar uma mensagem "Conta não encontrada ou inexistente".
+Regras de Negócio
+O sistema deve garantir que após a desativação da conta nenhuma transação possa ser processada.
+ 
+C04: Histórico de transações
+Descrição
+Permitir que o usuário visualize o histórico das transações em sua conta
+
+Atores
+Usuário, Sistema de autorização
+
+Pré-condições
+
+O usuário deve estar autenticado
+O sistema deve estar operacional
+Fluxo Principal
+
+O usuário acessa a interface de histórico de transações
+O sistema solicita o período ou filtros para o histórico com datas específicas ou valores
+O usuário insere os critérios e solicita a visualização do histórico
+O sistema recebe os dados e exibe o histórico de transações de acordo com os critérios fornecidos
+O usuário revisa as transações listadas
+Fluxo Alternativo
+
+Se nenhuma transação for encontrada
+
+O sistema exibe uma mensagem "Nenhum resultado foi encontrado"
+Se o período informado pelo usuário for maior que 30 dias
+
+O sistema exibe uma mensagem "O período não deve ser superior a 30 dias"
+Regras de Negócio
+O sistema deve garantir a segurança e a privacidade dos dados exibidos no histórico de transações.
+ 
+Caso de Uso 5: Atualização de Limite de Crédito
+Nome: Atualização de Limite de Crédito
+
+Descrição: Permite que um administrador ou o próprio usuário atualize o limite de crédito associado a uma conta.
+
+Atores: Administrador, Usuário, Sistema de Autorização
+
+Pré-condições:
+
+O usuário ou administrador deve estar autenticado.
+O sistema deve estar operacional.
+Fluxo Principal:
+
+O usuário ou administrador acessa a interface de atualização de limite de crédito.
+O sistema solicita o novo limite de crédito.
+O usuário ou administrador insere o novo limite e confirma a atualização.
+O sistema valida o novo limite (por exemplo, verifica se o valor está dentro de limites aceitáveis).
+O sistema atualiza o limite de crédito da conta.
+O sistema confirma a atualização do limite e notifica o usuário ou administrador.
+Fluxos Alternativos:
+
+A1: Limite Inválido
+O sistema verifica que o novo limite é inválido (fora do intervalo permitido).
+O sistema exibe uma mensagem de erro e solicita a correção do limite.
+Pós-condições:
+
+O limite de crédito da conta foi atualizado com sucesso.
+Requisitos Especiais:
+
+O sistema deve registrar a atualização do limite para fins de auditoria.
+ 
+Caso de Uso 6: Notificação de Transação
+Nome: Notificação de Transação
+
+Descrição: Notifica o usuário sobre o status de uma transação, seja ela autorizada ou rejeitada.
+
+Atores: Usuário, Sistema de Autorização
+
+Pré-condições:
+
+O status da transação (autorizada ou rejeitada) deve ser determinado pelo sistema.
+Fluxo Principal:
+
+Após a decisão sobre a transação (autorizada ou rejeitada), o sistema gera uma notificação.
+O sistema envia a notificação ao usuário, detalhando o status da transação.
+O usuário recebe a notificação e, se necessário, toma ações adicionais.
+Fluxos Alternativos:
+
+A1: Falha no Envio da Notificação
+O sistema enfrenta um problema técnico ao tentar enviar a notificação.
+O sistema tenta reenviar a notificação ou informa ao usuário sobre a falha na notificação.
+Pós-condições:
+
+O usuário é informado sobre o status da transação.
+ 
+Caso de Uso 7: Bloquear Cartão de Crédito
+Nome: Bloquear Cartão de Crédito
+Ator Primário: Usuário
+Descrição: Permite que o usuário bloqueie temporariamente um cartão de crédito em caso de perda ou roubo.
+Pré-condições:
+O usuário deve estar autenticado no sistema.
+Pós-condições:
+O status do cartão de crédito é alterado para bloqueado.
+Fluxo Principal:
+O usuário acessa a opção para bloquear um cartão de crédito.
+O sistema solicita que o usuário confirme o bloqueio.
+O usuário confirma a ação.
+O sistema atualiza o status do cartão para bloqueado.
+O sistema confirma o sucesso do bloqueio ao usuário.
+Fluxos Alternativos:
+Se o usuário não confirmar o bloqueio, o sistema cancela a operação e retorna ao menu principal.
+ 
+Caso de Uso 08: Consultar Saldo do Cartão de Crédito
+Nome: Consultar Saldo do Cartão de Crédito
+Ator Primário: Usuário
+Descrição: Permite que o usuário consulte o saldo disponível em um cartão de crédito específico.
+Pré-condições:
+O usuário deve estar autenticado no sistema.
+Pós-condições:
+O saldo do cartão de crédito é exibido ao usuário.
+Fluxo Principal:
+O usuário acessa a opção para consultar o saldo do cartão de crédito.
+O sistema solicita que o usuário selecione um cartão de crédito.
+O usuário seleciona o cartão desejado.
+O sistema exibe o saldo disponível do cartão.
+Fluxos Alternativos:
+Não aplicável.
