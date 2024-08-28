@@ -1,8 +1,8 @@
 # Projeto-Cloud
 O objetivo deste projeto é a implementação de um aplicativo que autoriza uma transação (cartão de crédito) para uma conta específica. Para isso, o projeto lidará com as seguintes operações:
-**1.** Criação de conta
-**2.** Autorização de transação
-**3.** Notificação de transação
+1. Criação de conta
+2. Autorização de transação
+3. Notificação de transação
 
 ### Regras de Negócio
 Para a implementação é necessário ter em mente as seguintes regras de negócio:
