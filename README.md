@@ -6,10 +6,10 @@ O objetivo deste projeto é a implementação de um aplicativo que autoriza uma 
 
 ### Regras de Negócio
 Para a implementação é necessário ter em mente as seguintes regras de negócio:
-1. O valor da transação não deve exceder o limite disponível: limite insuficiente
-2. Nenhuma transação deve ser aceita quando o cartão não está ativo: cartão não ativo
-3. Não deve haver mais de 3 transações em um intervalo de 2 minutos: alta-frequência-pequeno-intervalo
-4. Não deve haver mais de 2 transações semelhantes (mesmo valor e comerciante) em um intervalo de 2 minutos: transação duplicada
+- O valor da transação não deve exceder o limite disponível: limite insuficiente
+- Nenhuma transação deve ser aceita quando o cartão não está ativo: cartão não ativo
+- Não deve haver mais de 3 transações em um intervalo de 2 minutos: alta-frequência-pequeno-intervalo
+- Não deve haver mais de 2 transações semelhantes (mesmo valor e comerciante) em um intervalo de 2 minutos: transação duplicada
 
 
 
