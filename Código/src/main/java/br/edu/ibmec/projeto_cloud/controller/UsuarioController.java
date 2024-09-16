@@ -7,7 +7,6 @@ import br.edu.ibmec.projeto_cloud.service.UsuarioService;
 import jakarta.validation.Valid;
 import java.util.List;
 
-import org.hibernate.validator.constraints.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,7 @@ public class UsuarioController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable("id") UUID id){
+    public ResponseEntity<Usuario> getUsuarioById(@PathVariable("id") int id){
         Usuario response = service.getItem(id);
 
         if (response == null)

@@ -3,33 +3,42 @@ package br.edu.ibmec.projeto_cloud.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import br.edu.ibmec.projeto_cloud.model.Cartao;
 import br.edu.ibmec.projeto_cloud.model.Usuario;
+import br.edu.ibmec.projeto_cloud.repository.CartaoRepository;
+import br.edu.ibmec.projeto_cloud.repository.UsuarioRepository;
 import br.edu.ibmec.projeto_cloud.model.Transacao;
 
 
 @Service
 public class UsuarioService{
+  @Autowired
+  private UsuarioRepository usuarioRepository;
+
+
+  @Autowired
+  private CartaoRepository cartaoRepository;
+
   private static List<Usuario> database = new ArrayList<>();
 
   public List<Usuario>getAllItems(){
     return database;
   }
 
-  @SuppressWarnings("unlikely-arg-type")
-  public Usuario getItem(org.hibernate.validator.constraints.UUID id){
+  public Usuario getItem(int id){
     for (Usuario usuario:database){
-      if (usuario.getId().equals(id)){
+      if (usuario.getId()==(id)){
         return usuario;
       }
     }
     return null;
   }
 
-  public Usuario criarUsuario(UUID id, String nome, String cpf, LocalDateTime dataNascimento, String email, String endereco) throws Exception{
+  public Usuario criarUsuario(int id, String nome, String cpf, LocalDateTime dataNascimento, String email, String endereco) throws Exception{
     //Validar CPF
     if (!validarCpf(cpf)){
       throw new Exception("CPF inválido!");
@@ -37,7 +46,7 @@ public class UsuarioService{
     
     Usuario usuario = new Usuario();
     usuario.setCpf(cpf);
-    usuario.setId(UUID.randomUUID());
+    //usuario.setId(UUID.randomUUID());
     usuario.setNome(nome);
     usuario.setCpf(cpf);
     usuario.setDataNascimento(dataNascimento);
@@ -59,11 +68,11 @@ public class UsuarioService{
     );
   }
 
-  public Usuario buscarUsuario(UUID id){
+  public Usuario buscarUsuario(int id){
     return this.findUsuario(id);
   }
 
-  public void associarCartao (Cartao cartao, UUID id, Transacao transacao) throws Exception{
+  public void associarCartao (Cartao cartao, int id, Transacao transacao) throws Exception{
 
     //Buscar usuario
     Usuario usuario = this.findUsuario(id);
@@ -78,21 +87,26 @@ public class UsuarioService{
     }
 
     validarLimiteCredito(cartao, transacao.getValor());
-    validarFrequenciaTransacoes(usuario);
-    validarTransacaoDuplicada(usuario, transacao);
+    // validarFrequenciaTransacoes(usuario);
+    // validarTransacaoDuplicada(usuario, transacao);
 
     usuario.associarCartao(cartao);
   }
+// cria cartão
+  cartaoRepository.save(cartao);
+//atualiza o cartao
+  usuarioRepository.save(usuario);
 
-  private Usuario findUsuario(UUID id){
-    for (Usuario item : database){
-      if (item.getId()==id){
-        return item;
-      }
+
+  private Usuario findUsuario(int id){
+    Optional<Usuario> usuario = usuarioRepository.findById(id);
+
+    if (usuario.isEmpty())
+      return null;
+
+    return usuario.get();
   }
 
-  return null;
-}
 
 public boolean validarCpf(String cpf) {
   return cpf != null && cpf.matches("\\d{11}");
@@ -104,27 +118,27 @@ public void validarLimiteCredito(Cartao cartao, double valorTransacao) throws Ex
   }
 }
 
-public void validarFrequenciaTransacoes(Usuario usuario) throws Exception {
-  List<Transacao> transacoesRecentes = usuario.getTransacoes()
-      .stream()
-      .filter(t -> t.getDataTransacao().isAfter(LocalDateTime.now().minusMinutes(2)))
-      .collect(Collectors.toList());
+// public void validarFrequenciaTransacoes(Usuario usuario) throws Exception {
+//   List<Transacao> transacoesRecentes = usuario.getTransacoes()
+//       .stream()
+//       .filter(t -> t.getDataTransacao().isAfter(LocalDateTime.now().minusMinutes(2)))
+//       .collect(Collectors.toList());
 
-  if (transacoesRecentes.size() >= 3) {
-    throw new Exception("Alta-frequência de transações em pequeno intervalo");
-  }
-}
+//   if (transacoesRecentes.size() >= 3) {
+//     throw new Exception("Alta-frequência de transações em pequeno intervalo");
+//   }
+// }
 
-public void validarTransacaoDuplicada(Usuario usuario, Transacao novaTransacao) throws Exception {
-  long transacoesSemelhantes = usuario.getTransacoes()
-      .stream()
-      .filter(t -> t.getDataTransacao().isAfter(LocalDateTime.now().minusMinutes(2)))
-      .filter(t -> t.getValor() == novaTransacao.getValor() && t.getEstabelecimento().equals(novaTransacao.getEstabelecimento()))
-      .count();
+// public void validarTransacaoDuplicada(Usuario usuario, Transacao novaTransacao) throws Exception {
+//   long transacoesSemelhantes = usuario.getTransacoes()
+//       .stream()
+//       .filter(t -> t.getDataTransacao().isAfter(LocalDateTime.now().minusMinutes(2)))
+//       .filter(t -> t.getValor() == novaTransacao.getValor() && t.getEstabelecimento().equals(novaTransacao.getEstabelecimento()))
+//       .count();
 
-  if (transacoesSemelhantes >= 2) {
-    throw new Exception("Transação duplicada");
-  }
-}
+//   if (transacoesSemelhantes >= 2) {
+//     throw new Exception("Transação duplicada");
+//   }
+// }
 }
 
