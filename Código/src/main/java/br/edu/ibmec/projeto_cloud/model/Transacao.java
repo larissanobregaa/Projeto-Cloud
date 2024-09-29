@@ -2,10 +2,12 @@ package br.edu.ibmec.projeto_cloud.model;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -28,4 +30,8 @@ public class Transacao {
   
   @Column
   public LocalDateTime dataTransacao;  
+
+  @ManyToOne
+  @JoinColumn(name = "cartao_id", nullable = false)  // O cartão não pode ser nulo
+  public Cartao cartao;
 }

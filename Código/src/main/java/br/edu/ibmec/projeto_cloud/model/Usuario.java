@@ -1,6 +1,6 @@
 package br.edu.ibmec.projeto_cloud.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +10,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.ArrayList;
 
 import java.util.List;
 import lombok.Data;
@@ -47,13 +50,13 @@ public class Usuario {
 
 
   @Column
-  @NotBlank(message = "Campo data de nascimento é obrigatório")
-  private LocalDateTime dataNascimento;
-  
+  @NotNull(message = "campo obrigatorio")
+  private LocalDate dataNascimento;
+
 
   @OneToMany
   @JoinColumn(referencedColumnName = "id", name = "usuario_id")
-  private List<Cartao> cartoes;
+  private List<Cartao> cartoes = new ArrayList<>();
 
   public void associarCartao (Cartao cartao){
     this.cartoes.add(cartao);

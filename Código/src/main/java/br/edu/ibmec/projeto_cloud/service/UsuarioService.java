@@ -1,7 +1,5 @@
 package br.edu.ibmec.projeto_cloud.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,130 +13,87 @@ import br.edu.ibmec.projeto_cloud.model.Transacao;
 
 
 @Service
-public class UsuarioService{
+public class UsuarioService {
+
   @Autowired
   private UsuarioRepository usuarioRepository;
-
 
   @Autowired
   private CartaoRepository cartaoRepository;
 
-  private static List<Usuario> database = new ArrayList<>();
-
-  public List<Usuario>getAllItems(){
-    return database;
+  // Busca todos os usuários
+  public List<Usuario> getAllItems() {
+    return usuarioRepository.findAll();
   }
 
-  public Usuario getItem(int id){
-    for (Usuario usuario:database){
-      if (usuario.getId()==(id)){
-        return usuario;
-      }
-    }
-    return null;
+  // Busca um usuário por ID
+  public Usuario getItem(int id) {
+    return findUsuario(id);
   }
 
-  public Usuario criarUsuario(int id, String nome, String cpf, LocalDateTime dataNascimento, String email, String endereco) throws Exception{
-    //Validar CPF
-    if (!validarCpf(cpf)){
+  // Cria um novo usuário
+  public Usuario criarUsuario(Usuario usuario) throws Exception {
+    // Validar CPF
+    if (!validarCpf(usuario.getCpf())) {
       throw new Exception("CPF inválido!");
     }
-    
-    Usuario usuario = new Usuario();
-    usuario.setCpf(cpf);
-    //usuario.setId(UUID.randomUUID());
-    usuario.setNome(nome);
-    usuario.setCpf(cpf);
-    usuario.setDataNascimento(dataNascimento);
-    usuario.setEmail(email);
-    usuario.setEndereco(endereco);
-    
-    database.add(usuario);
-    return usuario;
+
+    // Verifica se o CPF já está cadastrado
+    Optional<Usuario> opUsuario = this.usuarioRepository.findUsuarioByCpf(usuario.getCpf());
+    if (opUsuario.isPresent()) {
+      throw new UsuarioException("Usuário com o CPF informado já cadastrado");
+    }
+
+    // Insere na Base de Dados
+    return usuarioRepository.save(usuario);
   }
 
-  public Usuario criarUsuario(Usuario usuario) throws Exception {
-    return criarUsuario(
-        usuario.getId(),
-        usuario.getNome(),
-        usuario.getCpf(),
-        usuario.getDataNascimento(),
-        usuario.getEmail(),
-        usuario.getEndereco()
-    );
-  }
-
-  public Usuario buscarUsuario(int id){
+  // Busca um usuário por ID
+  public Usuario buscarUsuario(int id) {
     return this.findUsuario(id);
   }
 
-  public void associarCartao (Cartao cartao, int id, Transacao transacao) throws Exception{
-
-    //Buscar usuario
+  // Associa um cartão ao usuário e valida transação
+  public void associarCartao(Cartao cartao, int id, Transacao transacao) throws Exception {
+    // Buscar usuário
     Usuario usuario = this.findUsuario(id);
 
-    //Validar se encontrou o usuario
-    if (usuario == null){
+    // Validar se encontrou o usuário
+    if (usuario == null) {
       throw new Exception("Usuário não encontrado");
     }
 
-    if (!cartao.getAtivo()){
-      throw new Exception("Cartao inativo. Impossível realizar transação.");
+    // Verifica se o cartão está ativo
+    if (!cartao.getAtivo()) {
+      throw new Exception("Cartão inativo. Impossível realizar transação.");
     }
 
+    // Validar limite de crédito
     validarLimiteCredito(cartao, transacao.getValor());
-    // validarFrequenciaTransacoes(usuario);
-    // validarTransacaoDuplicada(usuario, transacao);
 
+    // Associar cartão ao usuário
     usuario.associarCartao(cartao);
+
+    // Salvar as alterações no cartão e no usuário
+    cartaoRepository.save(cartao);
+    usuarioRepository.save(usuario);
   }
-// cria cartão
-  cartaoRepository.save(cartao);
-//atualiza o cartao
-  usuarioRepository.save(usuario);
 
-
-  private Usuario findUsuario(int id){
+  // Busca usuário por ID
+  private Usuario findUsuario(int id) {
     Optional<Usuario> usuario = usuarioRepository.findById(id);
-
-    if (usuario.isEmpty())
-      return null;
-
-    return usuario.get();
+    return usuario.orElse(null);
   }
 
+  // Valida o CPF
+  public boolean validarCpf(String cpf) {
+    return cpf != null && cpf.matches("\\d{11}");
+  }
 
-public boolean validarCpf(String cpf) {
-  return cpf != null && cpf.matches("\\d{11}");
-}
-
-public void validarLimiteCredito(Cartao cartao, double valorTransacao) throws Exception {
-  if (cartao.getLimiteCredito() < valorTransacao) {
-    throw new Exception("Limite insuficiente");
+  // Valida o limite de crédito do cartão
+  public void validarLimiteCredito(Cartao cartao, double valorTransacao) throws Exception {
+    if (cartao.getLimiteCredito() < valorTransacao) {
+      throw new Exception("Limite insuficiente");
+    }
   }
 }
-
-// public void validarFrequenciaTransacoes(Usuario usuario) throws Exception {
-//   List<Transacao> transacoesRecentes = usuario.getTransacoes()
-//       .stream()
-//       .filter(t -> t.getDataTransacao().isAfter(LocalDateTime.now().minusMinutes(2)))
-//       .collect(Collectors.toList());
-
-//   if (transacoesRecentes.size() >= 3) {
-//     throw new Exception("Alta-frequência de transações em pequeno intervalo");
-//   }
-// }
-
-// public void validarTransacaoDuplicada(Usuario usuario, Transacao novaTransacao) throws Exception {
-//   long transacoesSemelhantes = usuario.getTransacoes()
-//       .stream()
-//       .filter(t -> t.getDataTransacao().isAfter(LocalDateTime.now().minusMinutes(2)))
-//       .filter(t -> t.getValor() == novaTransacao.getValor() && t.getEstabelecimento().equals(novaTransacao.getEstabelecimento()))
-//       .count();
-
-//   if (transacoesSemelhantes >= 2) {
-//     throw new Exception("Transação duplicada");
-//   }
-// }
-}
-
