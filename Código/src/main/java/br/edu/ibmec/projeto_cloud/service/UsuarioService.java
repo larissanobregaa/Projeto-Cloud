@@ -53,6 +53,44 @@ public class UsuarioService {
     return this.findUsuario(id);
   }
 
+  public Usuario atualizarUsuario(int id, Usuario usuarioAtualizado) throws Exception {
+    // Buscar o usuário existente pelo ID
+    Usuario usuarioExistente = this.findUsuario(id);
+    
+    if (usuarioExistente == null) {
+        throw new Exception("Usuário não encontrado");
+    }
+    
+    // Validar CPF se for atualizado
+    if (!validarCpf(usuarioAtualizado.getCpf())) {
+        throw new Exception("CPF inválido!");
+    }
+
+    // Atualizar os dados do usuário
+    usuarioExistente.setNome(usuarioAtualizado.getNome());
+    usuarioExistente.setCpf(usuarioAtualizado.getCpf());
+    usuarioExistente.setDataNascimento(usuarioAtualizado.getDataNascimento());
+    usuarioExistente.setEmail(usuarioAtualizado.getEmail());
+    usuarioExistente.setEndereco(usuarioAtualizado.getEndereco());
+
+    // Salvar as alterações no repositório
+    return usuarioRepository.save(usuarioExistente);
+  }
+
+
+  public void deletarUsuario(int id) throws Exception {
+    // Buscar o usuário existente pelo ID
+    Usuario usuarioExistente = this.findUsuario(id);
+
+    if (usuarioExistente == null) {
+        throw new Exception("Usuário não encontrado");
+    }
+
+    // Remover o usuário do repositório
+    usuarioRepository.delete(usuarioExistente);
+  }
+
+  
   // Associa um cartão ao usuário e valida transação
   public void associarCartao(Cartao cartao, int id, Transacao transacao) throws Exception {
     // Buscar usuário
@@ -79,6 +117,20 @@ public class UsuarioService {
     usuarioRepository.save(usuario);
   }
 
+
+  public List<Cartao> verCartoesAssociados(int id) throws Exception {
+    // Buscar o usuário pelo ID
+    Usuario usuario = this.findUsuario(id);
+
+    if (usuario == null) {
+        throw new Exception("Usuário não encontrado");
+    }
+
+    // Retornar a lista de cartões associados ao usuário
+    return usuario.getCartoes();
+  }
+
+  
   // Busca usuário por ID
   private Usuario findUsuario(int id) {
     Optional<Usuario> usuario = usuarioRepository.findById(id);
