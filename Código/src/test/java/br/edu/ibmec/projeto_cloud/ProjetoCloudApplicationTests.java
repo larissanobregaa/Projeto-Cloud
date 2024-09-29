@@ -1,10 +1,10 @@
-package br.edu.ibmec.todo;
+package br.edu.ibmec.projeto_cloud;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TodoApplicationTests {
+class ProjetoCloudApplicationTests {
 
 	@Test
 	void contextLoads() {
