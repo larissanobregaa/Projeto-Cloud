@@ -2,6 +2,7 @@ package br.edu.ibmec.projeto_cloud.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,7 +38,7 @@ public class Cartao {
   
   @OneToMany
   @JoinColumn(referencedColumnName = "id", name = "cartao_id")
-  public List<Transacao> transacoes;
+  public List<Transacao> transacoes = new ArrayList<>();
 
   public double getLimiteCredito(){
     return limiteCredito;
