@@ -9,4 +9,5 @@ public class ProjetoCloudApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ProjetoCloudApplication.class, args);
 	}
+
 }
