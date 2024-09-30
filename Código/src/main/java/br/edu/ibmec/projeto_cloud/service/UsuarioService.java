@@ -74,6 +74,7 @@ public class UsuarioService {
     usuarioExistente.setDataNascimento(usuarioAtualizado.getDataNascimento());
     usuarioExistente.setEmail(usuarioAtualizado.getEmail());
     usuarioExistente.setEndereco(usuarioAtualizado.getEndereco());
+    usuarioExistente.setCartoes(usuarioAtualizado.getCartoes());
 
     // Salvar as alterações no repositório
     return usuarioRepository.save(usuarioExistente);

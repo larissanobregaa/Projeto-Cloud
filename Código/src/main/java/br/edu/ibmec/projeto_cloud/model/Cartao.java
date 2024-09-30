@@ -14,22 +14,46 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-
 
 @Data
 @Entity
 public class Cartao {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  public int id;
+  private int id;
 
   @NotBlank(message = "Insira um número de cartão válido.")
   @Column
-  public String numeroCartao;
+  @Pattern(regexp = "\\d{16}", message = "Insira um número de cartão válido.")
+  private String numeroCartao;
 
   @Column
+<<<<<<< HEAD
+  private LocalDateTime dataValidade;
+  
+  @Column
+  private Double limiteCredito;
+  
+  @Column
+  private Boolean ativo;
+  
+  @OneToMany(mappedBy = "cartao")
+  private List<Transacao> transacoes = new ArrayList<>();
+
+  @ManyToOne
+  @JoinColumn(name = "usuario_id")
+  private Usuario usuario;
+
+  // Métodos existentes
+  public Double getLimiteCredito() {
+    return limiteCredito != null ? limiteCredito : 0.0;
+}
+
+=======
   public LocalDate dataValidade;
   
   @Column
@@ -59,6 +83,7 @@ public class Cartao {
   public double getLimiteCredito(){
     return limiteCredito != null ? limiteCredito : 0.0;
   }
+>>>>>>> main
 
   public void setLimiteCredito(double limiteCredito){
     this.limiteCredito = limiteCredito;
@@ -71,5 +96,21 @@ public class Cartao {
   public void setAtivo(boolean ativo){
     this.ativo = ativo;
   }
+<<<<<<< HEAD
+
+  // Novos métodos
+  public void setUsuario(Usuario usuario) {
+    this.usuario = usuario;
+  }
+
+  public String getNumero() {
+    return numeroCartao;
+  }
+
+  public LocalDateTime getValidade() {
+    return dataValidade;
+  }
+=======
   
+>>>>>>> main
 }
