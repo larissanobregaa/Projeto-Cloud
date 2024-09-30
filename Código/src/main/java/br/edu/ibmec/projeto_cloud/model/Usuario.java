@@ -15,6 +15,9 @@ import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 
 import java.util.List;
+
+import org.hibernate.validator.constraints.br.CPF;
+
 import lombok.Data;
 
 
@@ -27,13 +30,13 @@ public class Usuario {
   private int id;
   
 
-
   @Column
   @NotBlank(message = "Campo nome é obrigatório")
   private String nome;
 
 
   @Column
+  @CPF(message = "CPF deve ter fomato válido")
   @NotBlank(message = "Campo CPF é obrigatório")
   private String cpf;
 
