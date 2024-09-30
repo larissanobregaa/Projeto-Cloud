@@ -55,6 +55,7 @@ public void validarTransacaoDuplicada(Usuario usuario, Transacao novaTransacao) 
             .orElseThrow(() -> new Exception("Cartão não encontrado com ID: " + cartaoId));
         
         transacao.setCartao(cartao);
+        
         return transacaoRepository.save(transacao);
     }
 

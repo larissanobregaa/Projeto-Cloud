@@ -3,6 +3,7 @@ package br.edu.ibmec.projeto_cloud.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.edu.ibmec.projeto_cloud.dto.CartaoTransacaoDTO;
 import br.edu.ibmec.projeto_cloud.model.Cartao;
 import br.edu.ibmec.projeto_cloud.model.Transacao;
 import br.edu.ibmec.projeto_cloud.model.Usuario;
@@ -41,14 +42,16 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> criarUsuario(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> criarUsuario(@RequestBody Usuario usuario) {
         try {
             Usuario novoUsuario = service.criarUsuario(usuario); // Use 'service' ao invés de 'usuarioService'
             return ResponseEntity.ok(novoUsuario);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            // Retorna uma mensagem de erro com a exceção capturada
+            return ResponseEntity.badRequest().body("Erro ao criar usuário: " + e.getMessage());
         }
     }
+    
 
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> atualizarUsuario(@PathVariable int id, @RequestBody Usuario usuarioAtualizado) {
@@ -71,14 +74,17 @@ public class UsuarioController {
     }
 
     @PostMapping("/{id}/cartoes")
-    public ResponseEntity<Void> associarCartao(@PathVariable int id, @RequestBody Cartao cartao, @RequestBody Transacao transacao) {
-        try {
-            service.associarCartao(cartao, id, transacao); // Use 'service'
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+public ResponseEntity<Void> associarCartao(@PathVariable int id, @RequestBody CartaoTransacaoDTO cartaoTransacaoDTO) {
+    try {
+        Cartao cartao = cartaoTransacaoDTO.getCartao();
+        Transacao transacao = cartaoTransacaoDTO.getTransacao();
+        service.associarCartao(cartao, id, transacao); // Chame o serviço com os objetos deserializados
+        return ResponseEntity.ok().build();
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().build();
     }
+}
+
 
     @GetMapping("/{id}/cartoes")
     public ResponseEntity<List<Cartao>> verCartoesAssociados(@PathVariable int id) {

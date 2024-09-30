@@ -23,13 +23,12 @@ public class TransacaoController {
   private TransacaoService transacaoService;
 
   @PostMapping("/cartoes/{cartaoId}/criar")
-  public ResponseEntity<Transacao> criarTransacao(@PathVariable int cartaoId, @RequestBody Transacao transacao) {
-    try{
-        Transacao novTransacao = transacaoService.criarTransacao(cartaoId, transacao);
-        return new ResponseEntity<>(novTransacao, HttpStatus.CREATED);
-    } catch (Exception e) {
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+public ResponseEntity<Transacao> criarTransacao(@PathVariable int cartaoId, @RequestBody Transacao transacao) throws Exception {
+   
+        Transacao novaTransacao = transacaoService.criarTransacao(cartaoId, transacao);
+        
+        return new ResponseEntity<>(novaTransacao, HttpStatus.CREATED);
+   
   }
 
   // Buscar uma transação por ID
