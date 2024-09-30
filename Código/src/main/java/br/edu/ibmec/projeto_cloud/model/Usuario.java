@@ -26,8 +26,6 @@ public class Usuario {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   
-
-
   @Column
   @NotBlank(message = "Campo nome é obrigatório")
   private String nome;
@@ -53,6 +51,7 @@ public class Usuario {
   @NotNull(message = "campo obrigatorio")
   private LocalDate dataNascimento;
 
+  private Boolean ativo;
 
   @OneToMany
   @JoinColumn(referencedColumnName = "id", name = "usuario_id")
@@ -61,4 +60,12 @@ public class Usuario {
   public void associarCartao (Cartao cartao){
     this.cartoes.add(cartao);
   }
+
+  public Boolean getAtivo() {
+    return ativo;
+}
+
+public void setAtivo(Boolean ativo) {
+    this.ativo = ativo;
+}
 }

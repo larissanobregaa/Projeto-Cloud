@@ -27,9 +27,13 @@ public class UsuarioController {
     private UsuarioService service; // Padronize o nome como 'service'
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> getUsuario(){
-        return new ResponseEntity<>(service.getAllItems(), HttpStatus.OK);
+    public ResponseEntity<List<Usuario>> getUsuario() {
+    List<Usuario> usuarios = service.getAllItems();
+    if (usuarios.isEmpty()) {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    return new ResponseEntity<>(usuarios, HttpStatus.OK);
+        }
 
     @GetMapping("{id}")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable("id") int id){
