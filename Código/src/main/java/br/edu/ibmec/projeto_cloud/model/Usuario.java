@@ -15,6 +15,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 
 import java.util.List;
+
+
 import lombok.Data;
 
 
@@ -26,6 +28,10 @@ public class Usuario {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
   @Column
   @NotBlank(message = "Campo nome é obrigatório")
   private String nome;

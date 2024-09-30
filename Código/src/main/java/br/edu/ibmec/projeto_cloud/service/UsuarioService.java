@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import br.edu.ibmec.projeto_cloud.exception.UsuarioException;
 import br.edu.ibmec.projeto_cloud.model.Cartao;
 import br.edu.ibmec.projeto_cloud.model.Usuario;
 import br.edu.ibmec.projeto_cloud.repository.CartaoRepository;
