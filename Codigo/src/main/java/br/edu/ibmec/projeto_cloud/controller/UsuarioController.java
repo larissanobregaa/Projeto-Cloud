@@ -1,6 +1,13 @@
 package br.edu.ibmec.projeto_cloud.controller;
 
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/controller/UsuarioController.java
 import br.edu.ibmec.projeto_cloud.exception.UsuarioException;
+=======
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.edu.ibmec.projeto_cloud.dto.CartaoTransacaoDTO;
+>>>>>>> 12809c6147131880ffe65102ce2907d95a5348cf:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/controller/UsuarioController.java
 import br.edu.ibmec.projeto_cloud.model.Cartao;
 import br.edu.ibmec.projeto_cloud.model.Endereco; // Importando a nova classe Endereco
 import br.edu.ibmec.projeto_cloud.model.Usuario;
@@ -38,14 +45,20 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> criarUsuario(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> criarUsuario(@RequestBody Usuario usuario) {
         try {
             Usuario novoUsuario = service.criarUsuario(usuario);
             return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
         } catch (Exception e) {
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/controller/UsuarioController.java
             return ResponseEntity.badRequest().build();
+=======
+            // Retorna uma mensagem de erro com a exceção capturada
+            return ResponseEntity.badRequest().body("Erro ao criar usuário: " + e.getMessage());
+>>>>>>> 12809c6147131880ffe65102ce2907d95a5348cf:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/controller/UsuarioController.java
         }
     }
+    
 
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> atualizarUsuario(@PathVariable int id, @RequestBody Usuario usuarioAtualizado) {
@@ -72,6 +85,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/{id}/cartoes")
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/controller/UsuarioController.java
     public ResponseEntity<Void> associarCartao(@PathVariable int id, @RequestBody Cartao cartao, @RequestParam double valorTransacao) {
         try {
             service.associarCartao(cartao, id, valorTransacao);
@@ -81,7 +95,19 @@ public class UsuarioController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build(); // Retorna 500 em caso de erro interno
         }
+=======
+public ResponseEntity<Void> associarCartao(@PathVariable int id, @RequestBody CartaoTransacaoDTO cartaoTransacaoDTO) {
+    try {
+        Cartao cartao = cartaoTransacaoDTO.getCartao();
+        Transacao transacao = cartaoTransacaoDTO.getTransacao();
+        service.associarCartao(cartao, id, transacao); // Chame o serviço com os objetos deserializados
+        return ResponseEntity.ok().build();
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().build();
+>>>>>>> 12809c6147131880ffe65102ce2907d95a5348cf:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/controller/UsuarioController.java
     }
+}
+
 
     @GetMapping("/{id}/cartoes")
     public ResponseEntity<List<Cartao>> verCartoesAssociados(@PathVariable int id) {

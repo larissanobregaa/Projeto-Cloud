@@ -5,7 +5,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/model/Usuario.java
 import jakarta.validation.constraints.Pattern;
+=======
+
+import java.util.ArrayList;
+
+import java.util.List;
+
+>>>>>>> 12809c6147131880ffe65102ce2907d95a5348cf:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/model/Usuario.java
 
 import lombok.Data;
 import java.util.ArrayList;
@@ -23,7 +31,12 @@ public class Usuario {
   @NotBlank(message = "Campo nome é obrigatório")
   private String nome;
 
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/model/Usuario.java
   @Column(unique = true)
+=======
+
+  @Column
+>>>>>>> 12809c6147131880ffe65102ce2907d95a5348cf:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/model/Usuario.java
   @NotBlank(message = "Campo CPF é obrigatório")
   @Pattern(regexp = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", message = "CPF deve seguir o padrão XXX.XXX.XXX-XX")
   private String cpf;

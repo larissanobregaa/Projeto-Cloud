@@ -57,6 +57,7 @@ public class TransacaoService {
         validarTransacaoDuplicada(cartao.getUsuario(), transacao);
 
         transacao.setCartao(cartao);
+        
         return transacaoRepository.save(transacao);
     }
 
