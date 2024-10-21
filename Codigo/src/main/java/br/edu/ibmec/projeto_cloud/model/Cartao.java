@@ -1,7 +1,10 @@
 package br.edu.ibmec.projeto_cloud.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,16 +30,17 @@ public class Cartao {
   public String numeroCartao;
 
   @Column
-  public LocalDateTime dataValidade;
+  public LocalDate dataValidade;
   
   @Column
-  public Double limiteCredito;
+  public Double limiteCredito = 0.0;
   
   
   @Column
-  public Boolean ativo;
+  public Boolean ativo = false;
   
   @ManyToOne
+  @JsonIgnore
   @JoinColumn(name = "usuario_id") 
   private Usuario usuario;
 
@@ -53,7 +57,7 @@ public class Cartao {
   }
 
   public double getLimiteCredito(){
-    return limiteCredito;
+    return limiteCredito != null ? limiteCredito : 0.0;
   }
 
   public void setLimiteCredito(double limiteCredito){
@@ -61,7 +65,7 @@ public class Cartao {
   }
 
   public boolean getAtivo(){
-    return ativo;
+    return ativo != null ? ativo : false;
   }
 
   public void setAtivo(boolean ativo){
