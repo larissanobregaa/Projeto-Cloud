@@ -10,6 +10,7 @@ import br.edu.ibmec.projeto_cloud.dto.CartaoTransacaoDTO;
 >>>>>>> 12809c6147131880ffe65102ce2907d95a5348cf:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/controller/UsuarioController.java
 import br.edu.ibmec.projeto_cloud.model.Cartao;
 import br.edu.ibmec.projeto_cloud.model.Endereco; // Importando a nova classe Endereco
+import br.edu.ibmec.projeto_cloud.model.Transacao;
 import br.edu.ibmec.projeto_cloud.model.Usuario;
 import br.edu.ibmec.projeto_cloud.service.UsuarioService;
 
