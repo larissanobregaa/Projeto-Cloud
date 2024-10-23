@@ -23,7 +23,6 @@ public class TransacaoController {
   private TransacaoService transacaoService;
 
   @PostMapping("/cartoes/{cartaoId}/criar")
-<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/controller/TransacaoController.java
   public ResponseEntity<Transacao> criarTransacao(@PathVariable int cartaoId, @RequestBody Transacao transacao) {
     try{
         Transacao novaTransacao = transacaoService.criarTransacao(cartaoId, transacao);
@@ -31,14 +30,6 @@ public class TransacaoController {
     } catch (Exception e) {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-=======
-public ResponseEntity<Transacao> criarTransacao(@PathVariable int cartaoId, @RequestBody Transacao transacao) throws Exception {
-   
-        Transacao novaTransacao = transacaoService.criarTransacao(cartaoId, transacao);
-        
-        return new ResponseEntity<>(novaTransacao, HttpStatus.CREATED);
-   
->>>>>>> 12809c6147131880ffe65102ce2907d95a5348cf:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/controller/TransacaoController.java
   }
 
   // Buscar uma transação por ID

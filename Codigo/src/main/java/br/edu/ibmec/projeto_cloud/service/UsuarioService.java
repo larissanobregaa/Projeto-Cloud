@@ -62,7 +62,7 @@ public class UsuarioService {
     usuarioExistente.setCpf(usuarioAtualizado.getCpf());
     usuarioExistente.setDataNascimento(usuarioAtualizado.getDataNascimento());
     usuarioExistente.setEmail(usuarioAtualizado.getEmail());
-    usuarioExistente.setEndereco(usuarioAtualizado.getEndereco());
+    //usuarioExistente.setEndereco(usuarioAtualizado.getEndereco());
 
     // Salvar as alterações no repositório
     return usuarioRepository.save(usuarioExistente);
