@@ -70,11 +70,7 @@
                 <target>21</target>
             </configuration>
         </plugin>
-    </plugins>
-</build>
-    <build>
-        <plugins>
-            <plugin>
+         <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
@@ -85,7 +81,7 @@
                         </exclude>
                     </excludes>
                 </configuration>
-            </plugin>
-        </plugins>
-    </build>
+            </plugin>           
+    </plugins>
+</build>
 </project>
