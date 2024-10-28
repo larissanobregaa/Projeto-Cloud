@@ -23,7 +23,14 @@ public class Usuario {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/model/Usuario.java
+  
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> main:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/model/Usuario.java
 
+>>>>>>> main
   @Column
   @NotBlank(message = "Campo nome é obrigatório")
   private String nome;
@@ -43,9 +50,13 @@ public class Usuario {
   @NotNull(message = "Campo data de nascimento é obrigatório!")
   private LocalDate dataNascimento;
 
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/model/Usuario.java
+  private Boolean ativo;
+=======
   @Column
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario", orphanRemoval = true)
   private List<Endereco> enderecos = new ArrayList<>();
+>>>>>>> main:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/model/Usuario.java
 
   @OneToMany
   @JoinColumn(name = "usuario_id")
@@ -55,8 +66,18 @@ public class Usuario {
     this.cartoes.add(cartao);
   }
 
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/model/Usuario.java
+  public Boolean getAtivo() {
+    return ativo;
+}
+
+public void setAtivo(Boolean ativo) {
+    this.ativo = ativo;
+}
+=======
   // Adicione um método para verificar se o usuário é maior de idade
   public boolean isMaiorDeIdade() {
     return LocalDate.now().minusYears(18).isAfter(dataNascimento);
   }
+>>>>>>> main:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/model/Usuario.java
 }

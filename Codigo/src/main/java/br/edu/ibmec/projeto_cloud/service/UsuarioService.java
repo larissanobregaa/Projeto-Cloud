@@ -62,7 +62,12 @@ public class UsuarioService {
     usuarioExistente.setCpf(usuarioAtualizado.getCpf());
     usuarioExistente.setDataNascimento(usuarioAtualizado.getDataNascimento());
     usuarioExistente.setEmail(usuarioAtualizado.getEmail());
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/service/UsuarioService.java
+    usuarioExistente.setEndereco(usuarioAtualizado.getEndereco());
+    usuarioExistente.setCartoes(usuarioAtualizado.getCartoes());
+=======
     //usuarioExistente.setEndereco(usuarioAtualizado.getEndereco());
+>>>>>>> main:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/service/UsuarioService.java
 
     // Salvar as alterações no repositório
     return usuarioRepository.save(usuarioExistente);

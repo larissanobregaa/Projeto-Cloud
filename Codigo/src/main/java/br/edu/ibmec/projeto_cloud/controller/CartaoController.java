@@ -1,18 +1,45 @@
 package br.edu.ibmec.projeto_cloud.controller;
 
+<<<<<<< HEAD
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+=======
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/controller/CartaoController.java
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+>>>>>>> main
+=======
 import org.springframework.web.bind.annotation.*;
+>>>>>>> main:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/controller/CartaoController.java
 
 import br.edu.ibmec.projeto_cloud.model.Cartao;
 import br.edu.ibmec.projeto_cloud.service.CartaoService;
 
+<<<<<<< HEAD
+import java.util.List;
+
 @RestController
 @RequestMapping("/cartoes") // Define um mapeamento base para o controlador
 public class CartaoController {
+
+=======
+@RestController
+@RequestMapping("/cartao") // Define um mapeamento base para o controlador
+public class CartaoController {
+>>>>>>> main
   @Autowired
   private CartaoService cartaoService; // Injeção do serviço responsável pela lógica dos cartões
 
@@ -48,7 +75,39 @@ public class CartaoController {
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/controller/CartaoController.java
+<<<<<<< HEAD
+}
+
+
+  // Deletar um cartão por ID
+  @DeleteMapping("/cartoes/{cartaoId}")
+  public ResponseEntity<Void> deletarCartao(@PathVariable int cartaoId) {
+    try {
+      cartaoService.deletarCartao(cartaoId);
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
   }
+
+  // Listar todos os cartões associados a um usuário
+  @GetMapping("/usuarios/{usuarioId}/cartoes")
+  public ResponseEntity<?> listarCartoesDoUsuario(@PathVariable int usuarioId) {
+    try {
+        List<Cartao> cartoes = cartaoService.listarCartoesDoUsuario(usuarioId);
+        return new ResponseEntity<>(cartoes, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>("Erro ao listar cartões: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
+=======
+>>>>>>> main
+}
+
+=======
+  }
+>>>>>>> main:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/controller/CartaoController.java
 
   // Deletar um cartão por ID
   @DeleteMapping("/{cartaoId}")
