@@ -57,10 +57,21 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-        </dependency>
-        
+        </dependency>  
     </dependencies>
-
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.10.1</version> <!-- Use uma versão mais recente, se necessário -->
+            <configuration>
+                <source>21</source>
+                <target>21</target>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
     <build>
         <plugins>
             <plugin>
