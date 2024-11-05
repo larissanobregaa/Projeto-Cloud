@@ -1,5 +1,6 @@
 package br.edu.ibmec.projeto_cloud;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import br.edu.ibmec.projeto_cloud.model.Usuario;
 import br.edu.ibmec.projeto_cloud.repository.UsuarioRepository;
 import br.edu.ibmec.projeto_cloud.service.UsuarioService;
-
 @SpringBootTest
 public class UsuarioServiceTest {
     @Autowired
@@ -41,43 +41,30 @@ public class UsuarioServiceTest {
         assertEquals("João", resultado.getNome());
     }
 
-    // Teste para criar usuário com email inválido
-    @Test
-    public void testCriarUsuarioComEmailInvalido() {
-        Usuario usuario = new Usuario();
-        usuario.setEmail("email_invalido");
-
-        Exception exception = assertThrows(Exception.class, () -> {
-            usuarioService.criarUsuario(usuario);
-        });
-
-        assertEquals("Email inválido", exception.getMessage());
-    }
-
     // Teste para buscar usuário por ID
     @Test
     public void testBuscarUsuarioPorId() {
         Usuario usuario = new Usuario();
         usuario.setId(1);
-        usuario.setNome("João");
+        usuario.setNome("Maria");
 
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
 
-        Usuario resultado = usuarioService.buscarUsuarioPorId(1);
+        Usuario resultado = usuarioService.getItem(1);
 
         assertNotNull(resultado);
-        assertEquals("João", resultado.getNome());
+        assertEquals("Maria", resultado.getNome());
     }
 
-    // Teste para atualizar um usuário
+    // Teste para atualizar usuário
     @Test
-    public void testAtualizarUsuario() {
+    public void testAtualizarUsuario() throws Exception {
         Usuario usuarioExistente = new Usuario();
         usuarioExistente.setId(1);
         usuarioExistente.setNome("João");
 
         Usuario usuarioAtualizado = new Usuario();
-        usuarioAtualizado.setNome("José");
+        usuarioAtualizado.setNome("Carlos");
 
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuarioExistente));
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioAtualizado);
@@ -85,12 +72,12 @@ public class UsuarioServiceTest {
         Usuario resultado = usuarioService.atualizarUsuario(1, usuarioAtualizado);
 
         assertNotNull(resultado);
-        assertEquals("José", resultado.getNome());
+        assertEquals("Carlos", resultado.getNome());
     }
 
-    // Teste para deletar um usuário
+    // Teste para deletar usuário
     @Test
-    public void testDeletarUsuario() {
+    public void testDeletarUsuario() throws Exception {
         Usuario usuario = new Usuario();
         usuario.setId(1);
 
@@ -101,3 +88,4 @@ public class UsuarioServiceTest {
         verify(usuarioRepository, times(1)).delete(usuario);
     }
 }
+

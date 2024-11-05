@@ -17,22 +17,25 @@ import br.edu.ibmec.projeto_cloud.model.Transacao;
 import br.edu.ibmec.projeto_cloud.service.TransacaoService;
 
 @RestController
-@RequestMapping("/transacoes")
+@RequestMapping("/transacao")
 public class TransacaoController {
-  @Autowired
-  private TransacaoService transacaoService;
 
-  @PostMapping("/cartoes/{cartaoId}/criar")
-  public ResponseEntity<Transacao> criarTransacao(@PathVariable int cartaoId, @RequestBody Transacao transacao) {
-    try{
-        Transacao novaTransacao = transacaoService.criarTransacao(cartaoId, transacao);
-        return new ResponseEntity<>(novaTransacao, HttpStatus.CREATED);
-    } catch (Exception e) {
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @Autowired
+    private TransacaoService transacaoService;
+
+    // Criar uma nova transação
+    @PostMapping("/cartoes/{cartaoId}/criar")
+    public ResponseEntity<?> criarTransacao(@PathVariable int cartaoId, @RequestBody Transacao transacao) {
+        try {
+            Transacao novaTransacao = transacaoService.criarTransacao(cartaoId, transacao);
+            return new ResponseEntity<>(novaTransacao, HttpStatus.CREATED);
+        } catch (Exception e) {
+            // Retorna a mensagem da exceção com status apropriado
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro: " + e.getMessage());
+        }
     }
-  }
 
-  // Buscar uma transação por ID
+    // Buscar uma transação por ID
     @GetMapping("/{transacaoId}")
     public ResponseEntity<Transacao> buscarTransacaoPorId(@PathVariable int transacaoId) {
         Transacao transacao = transacaoService.buscarTransacaoPorId(transacaoId);
@@ -44,34 +47,35 @@ public class TransacaoController {
 
     // Listar todas as transações de um cartão
     @GetMapping("/cartoes/{cartaoId}")
-    public ResponseEntity<List<Transacao>> listarTransacoesDoCartao(@PathVariable int cartaoId) {
+    public ResponseEntity<?> listarTransacoesDoCartao(@PathVariable int cartaoId) {
         try {
             List<Transacao> transacoes = transacaoService.listarTransacoesDoCartao(cartaoId);
             return new ResponseEntity<>(transacoes, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
         }
     }
 
     // Atualizar uma transação existente
     @PutMapping("/{transacaoId}")
-    public ResponseEntity<Transacao> atualizarTransacao(@PathVariable int transacaoId, @RequestBody Transacao transacaoAtualizada) {
+    public ResponseEntity<?> atualizarTransacao(
+            @PathVariable int transacaoId, @RequestBody Transacao transacaoAtualizada) {
         try {
             Transacao transacao = transacaoService.atualizarTransacao(transacaoId, transacaoAtualizada);
             return new ResponseEntity<>(transacao, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
         }
     }
 
     // Deletar uma transação por ID
     @DeleteMapping("/{transacaoId}")
-    public ResponseEntity<Void> deletarTransacao(@PathVariable int transacaoId) {
+    public ResponseEntity<?> deletarTransacao(@PathVariable int transacaoId) {
         try {
             transacaoService.deletarTransacao(transacaoId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
         }
     }
 }

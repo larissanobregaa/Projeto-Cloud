@@ -1,18 +1,16 @@
 package br.edu.ibmec.projeto_cloud.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.edu.ibmec.projeto_cloud.exception.UsuarioException;
 import br.edu.ibmec.projeto_cloud.model.Cartao;
+import br.edu.ibmec.projeto_cloud.model.Endereco; // Importando a classe Endereco
 import br.edu.ibmec.projeto_cloud.model.Usuario;
 import br.edu.ibmec.projeto_cloud.repository.CartaoRepository;
 import br.edu.ibmec.projeto_cloud.repository.UsuarioRepository;
-import br.edu.ibmec.projeto_cloud.model.Transacao;
-
 
 @Service
 public class UsuarioService {
@@ -29,20 +27,19 @@ public class UsuarioService {
   }
 
   // Busca um usuário por ID
-  public Usuario getItem(int id) {
+  public Usuario getItem(int id) throws Exception {
     return findUsuario(id);
   }
 
   // Cria um novo usuário
-  public Usuario criarUsuario(Usuario usuario) throws Exception {
+  public Usuario criarUsuario(Usuario usuario) throws UsuarioException {
     // Validar CPF
     if (!validarCpf(usuario.getCpf())) {
-      throw new Exception("CPF inválido!");
+      throw new UsuarioException("CPF inválido!");
     }
 
     // Verifica se o CPF já está cadastrado
-    Optional<Usuario> opUsuario = this.usuarioRepository.findUsuarioByCpf(usuario.getCpf());
-    if (opUsuario.isPresent()) {
+    if (usuarioRepository.findUsuarioByCpf(usuario.getCpf()).isPresent()) {
       throw new UsuarioException("Usuário com o CPF informado já cadastrado");
     }
 
@@ -50,22 +47,14 @@ public class UsuarioService {
     return usuarioRepository.save(usuario);
   }
 
-  // Busca um usuário por ID
-  public Usuario buscarUsuario(int id) {
-    return this.findUsuario(id);
-  }
-
-  public Usuario atualizarUsuario(int id, Usuario usuarioAtualizado) throws Exception {
+  // Atualiza um usuário existente
+  public Usuario atualizarUsuario(int id, Usuario usuarioAtualizado) throws UsuarioException {
     // Buscar o usuário existente pelo ID
-    Usuario usuarioExistente = this.findUsuario(id);
-    
-    if (usuarioExistente == null) {
-        throw new Exception("Usuário não encontrado");
-    }
-    
+    Usuario usuarioExistente = findUsuario(id);
+
     // Validar CPF se for atualizado
     if (!validarCpf(usuarioAtualizado.getCpf())) {
-        throw new Exception("CPF inválido!");
+      throw new UsuarioException("CPF inválido!");
     }
 
     // Atualizar os dados do usuário
@@ -73,43 +62,35 @@ public class UsuarioService {
     usuarioExistente.setCpf(usuarioAtualizado.getCpf());
     usuarioExistente.setDataNascimento(usuarioAtualizado.getDataNascimento());
     usuarioExistente.setEmail(usuarioAtualizado.getEmail());
+<<<<<<< HEAD:Código/src/main/java/br/edu/ibmec/projeto_cloud/service/UsuarioService.java
     usuarioExistente.setEndereco(usuarioAtualizado.getEndereco());
+    usuarioExistente.setCartoes(usuarioAtualizado.getCartoes());
+=======
+    //usuarioExistente.setEndereco(usuarioAtualizado.getEndereco());
+>>>>>>> main:Codigo/src/main/java/br/edu/ibmec/projeto_cloud/service/UsuarioService.java
 
     // Salvar as alterações no repositório
     return usuarioRepository.save(usuarioExistente);
   }
 
-
-  public void deletarUsuario(int id) throws Exception {
+  public void deletarUsuario(int id) throws UsuarioException {
     // Buscar o usuário existente pelo ID
-    Usuario usuarioExistente = this.findUsuario(id);
-
-    if (usuarioExistente == null) {
-        throw new Exception("Usuário não encontrado");
-    }
-
-    // Remover o usuário do repositório
+    Usuario usuarioExistente = findUsuario(id);
     usuarioRepository.delete(usuarioExistente);
   }
 
-  
   // Associa um cartão ao usuário e valida transação
-  public void associarCartao(Cartao cartao, int id, Transacao transacao) throws Exception {
+  public void associarCartao(Cartao cartao, int id, double valorTransacao) throws UsuarioException {
     // Buscar usuário
-    Usuario usuario = this.findUsuario(id);
-
-    // Validar se encontrou o usuário
-    if (usuario == null) {
-      throw new Exception("Usuário não encontrado");
-    }
+    Usuario usuario = findUsuario(id);
 
     // Verifica se o cartão está ativo
     if (!cartao.getAtivo()) {
-      throw new Exception("Cartão inativo. Impossível realizar transação.");
+      throw new UsuarioException("Cartão inativo. Impossível realizar transação.");
     }
 
     // Validar limite de crédito
-    validarLimiteCredito(cartao, transacao.getValor());
+    validarLimiteCredito(cartao, valorTransacao); // Passando o valor da transação diretamente.
 
     // Associar cartão ao usuário
     usuario.associarCartao(cartao);
@@ -119,24 +100,35 @@ public class UsuarioService {
     usuarioRepository.save(usuario);
   }
 
-
-  public List<Cartao> verCartoesAssociados(int id) throws Exception {
+  public List<Cartao> verCartoesAssociados(int id) throws UsuarioException {
     // Buscar o usuário pelo ID
-    Usuario usuario = this.findUsuario(id);
-
-    if (usuario == null) {
-        throw new Exception("Usuário não encontrado");
-    }
-
-    // Retornar a lista de cartões associados ao usuário
+    Usuario usuario = findUsuario(id);
     return usuario.getCartoes();
   }
 
-  
+  // Método para associar um endereço ao usuário
+  public void associarEndereco(Endereco endereco, int id) throws UsuarioException {
+    // Buscar usuário
+    Usuario usuario = findUsuario(id);
+
+    // Associar o endereço ao usuário
+    usuario.getEnderecos().add(endereco);
+
+    // Salvar o usuário com o endereço associado
+    usuarioRepository.save(usuario);
+  }
+
+  // Método para listar os endereços associados ao usuário
+  public List<Endereco> verEnderecosAssociados(int id) throws UsuarioException {
+    // Buscar o usuário pelo ID
+    Usuario usuario = findUsuario(id);
+    return usuario.getEnderecos();
+  }
+
   // Busca usuário por ID
-  private Usuario findUsuario(int id) {
-    Optional<Usuario> usuario = usuarioRepository.findById(id);
-    return usuario.orElse(null);
+  private Usuario findUsuario(int id) throws UsuarioException {
+    return usuarioRepository.findById(id)
+            .orElseThrow(() -> new UsuarioException("Usuário não encontrado"));
   }
 
   // Valida o CPF
@@ -145,9 +137,9 @@ public class UsuarioService {
   }
 
   // Valida o limite de crédito do cartão
-  public void validarLimiteCredito(Cartao cartao, double valorTransacao) throws Exception {
+  public void validarLimiteCredito(Cartao cartao, double valorTransacao) throws UsuarioException {
     if (cartao.getLimiteCredito() < valorTransacao) {
-      throw new Exception("Limite insuficiente");
+      throw new UsuarioException("Limite insuficiente");
     }
   }
 }

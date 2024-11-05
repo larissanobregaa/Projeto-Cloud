@@ -15,12 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import br.edu.ibmec.projeto_cloud.model.Cartao;
-import br.edu.ibmec.projeto_cloud.model.Transacao;
 import br.edu.ibmec.projeto_cloud.model.Usuario;
 import br.edu.ibmec.projeto_cloud.repository.CartaoRepository;
 import br.edu.ibmec.projeto_cloud.repository.UsuarioRepository;
 import br.edu.ibmec.projeto_cloud.service.CartaoService;
-import br.edu.ibmec.projeto_cloud.service.TransacaoService;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
@@ -35,12 +33,13 @@ public class CartaoServiceTest {
 
     @MockBean
     private UsuarioRepository usuarioRepository;
-// Testa a criação de um cartão
+
+    // Testa a criação de um cartão
     @Test
     public void testCriarCartao() throws Exception {
         Usuario usuario = new Usuario();
         usuario.setId(1);
-        
+
         Cartao cartao = new Cartao();
         cartao.setNumeroCartao("1234-5678-9101-1121");
 
@@ -53,62 +52,48 @@ public class CartaoServiceTest {
         assertEquals("1234-5678-9101-1121", resultado.getNumeroCartao());
     }
 
+    // Testa a criação de um cartão com número nulo
+    @Test
+    public void testCriarCartaoComNumeroNulo() {
+        Cartao cartao = new Cartao();
+        cartao.setNumeroCartao(null); // Simula um cartão com número nulo
 
-// Testa a atualização de um cartão
-@Test
-public void testAtualizarCartao() throws Exception {
-    Cartao cartaoExistente = new Cartao();
-    cartaoExistente.setId(1);
-    cartaoExistente.setNumeroCartao("1234-5678-9101-1121");
+        Exception exception = assertThrows(Exception.class, () -> {
+            cartaoService.criarCartao(1, cartao);
+        });
 
-    Cartao cartaoAtualizado = new Cartao();
-    cartaoAtualizado.setNumeroCartao("4321-8765-1019-2111");
+        assertEquals("Número do cartão não pode ser nulo", exception.getMessage());
+    }
 
-    when(cartaoRepository.findById(1)).thenReturn(Optional.of(cartaoExistente));
-    when(cartaoRepository.save(any(Cartao.class))).thenReturn(cartaoAtualizado);
+    // Testa a atualização de um cartão
+    @Test
+    public void testAtualizarCartao() throws Exception {
+        Cartao cartaoExistente = new Cartao();
+        cartaoExistente.setId(1);
+        cartaoExistente.setNumeroCartao("1234-5678-9101-1121");
 
-    Cartao resultado = cartaoService.atualizarCartao(1, cartaoAtualizado);
+        Cartao cartaoAtualizado = new Cartao();
+        cartaoAtualizado.setNumeroCartao("4321-8765-1019-2111");
 
-    assertNotNull(resultado);
-    assertEquals("4321-8765-1019-2111", resultado.getNumeroCartao());
-}
+        when(cartaoRepository.findById(1)).thenReturn(Optional.of(cartaoExistente));
+        when(cartaoRepository.save(any(Cartao.class))).thenReturn(cartaoAtualizado);
 
-// Testa a exclusão de um cartão
-@Test
-public void testDeletarCartao() throws Exception {
-    Cartao cartao = new Cartao();
-    cartao.setId(1);
+        Cartao resultado = cartaoService.atualizarCartao(1, cartaoAtualizado);
 
-    when(cartaoRepository.findById(1)).thenReturn(Optional.of(cartao));
+        assertNotNull(resultado);
+        assertEquals("4321-8765-1019-2111", resultado.getNumeroCartao());
+    }
 
-    cartaoService.deletarCartao(1);
+    // Testa a exclusão de um cartão
+    @Test
+    public void testDeletarCartao() throws Exception {
+        Cartao cartao = new Cartao();
+        cartao.setId(1);
 
-    verify(cartaoRepository, times(1)).delete(cartao);
-}
+        when(cartaoRepository.findById(1)).thenReturn(Optional.of(cartao));
 
-// Testa a validação de transação duplicada
-@Test
-public void testValidarTransacaoDuplicada() throws Exception {
-    Usuario usuario = new Usuario();
-    Transacao transacao = new Transacao();
-    transacao.setValor(100.00);
-    transacao.setEstabelecimento("Loja X");
+        cartaoService.deletarCartao(1);
 
-    Transacao transacaoDuplicada = new Transacao();
-    transacaoDuplicada.setValor(100.00);
-    transacaoDuplicada.setEstabelecimento("Loja X");
-
-    Cartao cartao = new Cartao();
-    cartao.setTransacoes(Arrays.asList(transacao));
-    usuario.setCartoes(Arrays.asList(cartao));
-
-    Transacao novaTransacao = new Transacao();
-    novaTransacao.setValor(100.00);
-    novaTransacao.setEstabelecimento("Loja X");
-
-    TransacaoService service = new TransacaoService();
-    assertThrows(Exception.class, () -> {
-        service.validarTransacaoDuplicada(usuario, novaTransacao);
-    });
-}
+        verify(cartaoRepository, times(1)).delete(cartao);
+    }
 }

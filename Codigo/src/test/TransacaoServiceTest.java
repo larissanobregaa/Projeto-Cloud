@@ -22,7 +22,7 @@ import br.edu.ibmec.projeto_cloud.service.CartaoService;
 import br.edu.ibmec.projeto_cloud.service.TransacaoService;
 
 public class TransacaoServiceTest {
-    
+
     @InjectMocks
     private TransacaoService transacaoService;
 
@@ -86,9 +86,9 @@ public class TransacaoServiceTest {
     @Test
     public void testDeletarTransacao() throws Exception {
         when(transacaoRepository.findById(1)).thenReturn(Optional.of(transacao));
-        
+
         transacaoService.deletarTransacao(1);
-        
+
         verify(transacaoRepository, times(1)).delete(transacao);
     }
 
@@ -97,7 +97,7 @@ public class TransacaoServiceTest {
     public void testListarTransacoesDoCartao() {
         cartao.setTransacoes(Arrays.asList(transacao));
         when(cartaoService.listarCartoesDoUsuario(usuario.getId())).thenReturn(Arrays.asList(cartao));
-        
+
         List<Transacao> transacoes = transacaoService.listarTransacoesDoCartao(cartao.getId());
 
         assertNotNull(transacoes);
@@ -115,8 +115,10 @@ public class TransacaoServiceTest {
         novaTransacao.setValor(100.0);
         novaTransacao.setEstabelecimento("Loja X");
 
-        assertThrows(Exception.class, () -> {
+        Exception exception = assertThrows(Exception.class, () -> {
             transacaoService.validarTransacaoDuplicada(usuario, novaTransacao);
         });
+
+        assertEquals("Transação duplicada detectada", exception.getMessage());
     }
 }
