@@ -6,6 +6,6 @@ import lombok.Data;
 public class TransacaoRequest {
     private int idUsuario;
     private String numeroCartao;
-    private String comerciante;
+    private String establecimento;
     private Double valor;
 }

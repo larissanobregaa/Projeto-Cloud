@@ -3,7 +3,6 @@ package br.edu.ibmec.projeto_cloud.request;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data

@@ -51,9 +51,8 @@ public class CartaoService {
         Cartao cartaoExistente = buscarCartaoPorId(cartaoId);
 
         cartaoExistente.setNumeroCartao(cartaoAtualizado.getNumeroCartao());
-        cartaoExistente.setDataValidade(cartaoAtualizado.getDataValidade());
         cartaoExistente.setLimiteCredito(cartaoAtualizado.getLimiteCredito());
-        cartaoExistente.setAtivo(cartaoAtualizado.isAtivo());
+        cartaoExistente.setAtivo(cartaoAtualizado.getAtivo());
 
         return cartaoRepository.save(cartaoExistente);
     }
@@ -72,11 +71,6 @@ public class CartaoService {
 
     public void ativarCartao(int cartaoId) {
         Cartao cartao = buscarCartaoPorId(cartaoId);
-
-        if (!cartao.isAtivo() && cartao.isDesativadoPermanentemente()) {
-            throw new IllegalStateException("Cartão desativado permanentemente. Não pode ser reativado.");
-        }
-
         cartao.setAtivo(true);
         cartaoRepository.save(cartao);
     }
@@ -84,7 +78,6 @@ public class CartaoService {
     public void desativarCartao(int cartaoId) {
         Cartao cartao = buscarCartaoPorId(cartaoId);
         cartao.setAtivo(false);
-        cartao.setDesativadoPermanentemente(true);
         cartaoRepository.save(cartao);
     }
 
