@@ -1,4 +1,4 @@
-package br.edu.ibmec.projeto_cloud.request;
+package br.edu.ibmec.cloud.ecommerce.service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package br.edu.ibmec.projeto_cloud.request;
+package br.edu.ibmec.cloud.ecommerce.service;
 
 import lombok.Data;
 
@@ -8,4 +8,5 @@ public class TransacaoRequest {
     private String numeroCartao;
     private String estabelecimento;
     private Double valor;
+
 }
