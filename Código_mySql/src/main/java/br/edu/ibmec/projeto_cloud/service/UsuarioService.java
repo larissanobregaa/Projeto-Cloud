@@ -78,7 +78,7 @@ public class UsuarioService {
             throw new Exception("Usuário não encontrado");
         }
 
-        if (!cartao.isAtivo()) {
+        if (!cartao.getAtivo()) {
             throw new Exception("Cartão inativo. Impossível realizar transação.");
         }
 

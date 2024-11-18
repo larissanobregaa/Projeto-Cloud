@@ -25,16 +25,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UsuarioController {
     
     @Autowired
-    private UsuarioService service; // Padronize o nome como 'service'
+    private UsuarioService usuarioService; // Padronize o nome como 'service'
 
     @GetMapping
     public ResponseEntity<List<Usuario>> getUsuario(){
-        return new ResponseEntity<>(service.getAllItems(), HttpStatus.OK);
+        return new ResponseEntity<>(usuarioService.getAllItems(), HttpStatus.OK);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable("id") int id){
-        Usuario response = service.getItem(id);
+        Usuario response = usuarioService.getItem(id);
 
         if (response == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -44,7 +44,7 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<?> criarUsuario(@RequestBody Usuario usuario) {
         try {
-            Usuario novoUsuario = service.criarUsuario(usuario); // Use 'service' ao invés de 'usuarioService'
+            Usuario novoUsuario = usuarioService.criarUsuario(usuario); // Use 'service' ao invés de 'usuarioService'
             return new ResponseEntity<>(novoUsuario, HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao criar usuário: " + e.getMessage());
@@ -55,7 +55,7 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> atualizarUsuario(@PathVariable int id, @RequestBody Usuario usuarioAtualizado) {
         try {
-            Usuario usuario = service.atualizarUsuario(id, usuarioAtualizado); // Use 'service'
+            Usuario usuario = usuarioService.atualizarUsuario(id, usuarioAtualizado); // Use 'service'
             return ResponseEntity.ok(usuario);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
@@ -65,7 +65,7 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarUsuario(@PathVariable int id) {
         try {
-            service.deletarUsuario(id); // Use 'service'
+            usuarioService.deletarUsuario(id); // Use 'service'
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
@@ -77,7 +77,7 @@ public ResponseEntity<Void> associarCartao(@PathVariable int id, @RequestBody Ca
     try {
         Cartao cartao = cartaoTransacaoDTO.getCartao();
         Transacao transacao = cartaoTransacaoDTO.getTransacao();
-        service.associarCartao(cartao, id, transacao); // Chame o serviço com os objetos deserializados
+        usuarioService.associarCartao(cartao, id, transacao); // Chame o serviço com os objetos deserializados
         return ResponseEntity.ok().build();
     } catch (Exception e) {
         return ResponseEntity.badRequest().build();
@@ -88,7 +88,7 @@ public ResponseEntity<Void> associarCartao(@PathVariable int id, @RequestBody Ca
     @GetMapping("/{id}/cartoes")
     public ResponseEntity<List<Cartao>> verCartoesAssociados(@PathVariable int id) {
         try {
-            List<Cartao> cartoes = service.verCartoesAssociados(id); // Use 'service'
+            List<Cartao> cartoes = usuarioService.verCartoesAssociados(id); // Use 'service'
             return ResponseEntity.ok(cartoes);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
