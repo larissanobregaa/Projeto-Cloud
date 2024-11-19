@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-ProjetoCloudApplication<cartao_credito>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "br.edu.ibmec.projeto_cloud.ProjetoCloudApplication",
+      "projectName": "cartao_credito",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
