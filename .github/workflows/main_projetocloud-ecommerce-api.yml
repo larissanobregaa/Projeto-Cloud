@@ -30,7 +30,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/Código_mySql/target/*.jar'
+          path: '${{ github.workspace }}/Código/target/*.jar'
 
   deploy:
     runs-on: ubuntu-latest
