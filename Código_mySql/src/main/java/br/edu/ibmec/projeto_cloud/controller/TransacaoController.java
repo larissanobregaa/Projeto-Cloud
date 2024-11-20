@@ -39,13 +39,12 @@ public class TransacaoController {
         // Buscando o usuario
         Usuario user = this.usuarioService.buscarUsuario(request.getIdUsuario());
 
-        if (user == null) {
+        if (user == null)
             throw new UsuarioException("Usuario não encontrado, verifique o identificador");
-        }
 
         Optional<Cartao> optCartao = user.getCartoes()
                 .stream()
-                .filter(x -> request.getNumeroCartao() != null && request.getNumeroCartao().equals(x.numeroCartao))
+                .filter(x -> x.numeroCartao.equals(request.getNumeroCartao()))
                 .findFirst();
         // Não achei o cartao de credito do usuário
         if (optCartao.isPresent() == false)
@@ -84,7 +83,7 @@ public class TransacaoController {
 
         Optional<Cartao> optCartao = user.getCartoes()
                 .stream()
-                .filter(x -> numeroCartao != null && numeroCartao.equals(x.numeroCartao))
+                .filter(x -> x.numeroCartao.equals(numeroCartao))
                 .findFirst();
 
         // Não achei o cartao de credito do usuário

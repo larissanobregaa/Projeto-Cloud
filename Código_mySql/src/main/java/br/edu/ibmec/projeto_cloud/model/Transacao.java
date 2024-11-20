@@ -32,7 +32,7 @@ public class Transacao {
   public LocalDateTime dataTransacao;
 
   @ManyToOne
-  @JoinColumn(name = "cartao_id", nullable = false)
+  @JoinColumn(name = "cartao_id")
   private Cartao cartao;
 
 }
