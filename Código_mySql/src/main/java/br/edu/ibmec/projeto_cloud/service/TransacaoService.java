@@ -38,13 +38,14 @@ public class TransacaoService {
 }
 
 public void validarTransacaoDuplicada(Usuario usuario, Transacao novaTransacao) throws Exception {
-    boolean duplicada = usuario.getCartoes().stream()
+    long count = usuario.getCartoes().stream()
         .flatMap(cartao -> cartao.getTransacoes().stream())
-        .anyMatch(t -> t.getDataTransacao().isAfter(LocalDateTime.now().minusMinutes(5)) &&
-                       Double.compare(t.getValor(), novaTransacao.getValor()) == 0 &&
-                       t.getEstabelecimento().equals(novaTransacao.getEstabelecimento()));
+        .filter(t -> t.getDataTransacao().isAfter(LocalDateTime.now().minusMinutes(2)))
+        .filter(t -> Double.compare(t.getValor(), novaTransacao.getValor()) == 0)
+        .filter(t -> t.getEstabelecimento().equalsIgnoreCase(novaTransacao.getEstabelecimento()))
+        .count();
 
-    if (duplicada) {
+    if (count >= 2) { // Mais de duas transações semelhantes já registradas
         throw new Exception("Transação duplicada detectada. Aguarde alguns minutos.");
     }
 }
@@ -117,6 +118,7 @@ public void validarTransacaoDuplicada(Usuario usuario, Transacao novaTransacao) 
         transacaoRepository.delete(transacao);
     }
 
+    
     private void verificarAntifraude(Cartao cartao, double valor, String comerciante) throws Exception {
 
         // Valida se o cartão tem transações nos ultimos 3 minutos
