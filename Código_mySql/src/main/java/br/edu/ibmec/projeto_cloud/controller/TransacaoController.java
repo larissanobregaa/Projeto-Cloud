@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ibmec.projeto_cloud.exception.UsuarioException;
@@ -57,7 +58,7 @@ public class TransacaoController {
 
         try {
             Transacao transacao = this.transacaoService.criarTransacao(cartao, request.getValor(),
-                    request.getEstablecimento());
+                    request.getEstabelecimento());
             // Objeto de resposta do usuario
             response.setDataTransacao(transacao.getDataTransacao());
             response.setStatus("APROVADO");
@@ -73,9 +74,10 @@ public class TransacaoController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<List<Transacao>> extratoCartao(@PathVariable("id") int id, String numeroCartao)
-            throws Exception {
-        // Buscando o usuario
+    public ResponseEntity<List<Transacao>> extratoCartao(
+        @PathVariable("id") int id, 
+        @RequestParam ("numeroCartao") String numeroCartao) throws Exception {
+
         Usuario user = this.usuarioService.buscarUsuario(id);
 
         if (user == null)

@@ -2,6 +2,8 @@ package br.edu.ibmec.projeto_cloud.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,6 +35,7 @@ public class Transacao {
 
   @ManyToOne
   @JoinColumn(name = "cartao_id")
+  @JsonIgnore
   private Cartao cartao;
 
 }
