@@ -11,44 +11,36 @@ const {
     TextPrompt,
     WaterfallDialog
 } = require('botbuilder-dialogs');
-const { Channels } = require('botbuilder-core');
-const { ProdutoProfile } = require('../produtoProfile');
-const {Produto} = require("../produto");
+const { Produto } = require('../produto');
 const { Extrato } = require('../extrato');
+const { Pedido } = require('../pedidos');
 
 const NAME_PROMPT = 'NAME_PROMPT';
-const CARTAO_NUMBER_PROMPT = 'CARTAO_NUMBER_PROMPT';
+const CARD_PROMPT = 'CARD_PROMPT';
 const CHOICE_PROMPT = 'CHOICE_PROMPT';
 const PRODUCT_PROFILE = 'PRODUCT_PROFILE';
-const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
-
+const DIALOG_ID = 'PRODUCT_DIALOG';
 
 class ProductDialog extends ComponentDialog {
     constructor(userState) {
-        super('productDialog');
+        super(DIALOG_ID);
 
         this.productProfile = userState.createProperty(PRODUCT_PROFILE);
 
         this.addDialog(new TextPrompt(NAME_PROMPT));
-        this.addDialog(new TextPrompt(CARTAO_NUMBER_PROMPT));
+        this.addDialog(new TextPrompt(CARD_PROMPT));
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
 
-        this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-            this.menuStep.bind(this),
-            this.productNameStep.bind(this),
-            this.cartaoNumberStep.bind(this),
-            this.confirmStep.bind(this)
+        this.addDialog(new WaterfallDialog(DIALOG_ID, [
+            this.selectOptionStep.bind(this),
+            this.gatherDetailsStep.bind(this),
+            this.processStep.bind(this),
+            this.completeStep.bind(this)
         ]));
 
-        this.initialDialogId = WATERFALL_DIALOG;
+        this.initialDialogId = DIALOG_ID;
     }
 
-    /**
-     * The run method handles the incoming activity (in the form of a TurnContext) and passes it through the dialog system.
-     * If no dialog is active, it will start the default dialog.
-     * @param {*} turnContext
-     * @param {*} accessor
-     */
     async run(turnContext, accessor) {
         const dialogSet = new DialogSet(accessor);
         dialogSet.add(this);
@@ -60,56 +52,99 @@ class ProductDialog extends ComponentDialog {
         }
     }
 
-    async menuStep(step) {
-        return await step.prompt(CHOICE_PROMPT, {
-            prompt: 'Escolha a opção desejada',
-            choices: ChoiceFactory.toChoices(['Consultar Pedidos', 'Consultar Produtos', 'Extrato de Compras'])        });
+    async selectOptionStep(step) {
+        return step.prompt(CHOICE_PROMPT, {
+            prompt: 'Por favor, escolha uma opção:',
+            choices: ChoiceFactory.toChoices(['Consultar Pedidos', 'Consultar Produtos', 'Extrato de Compras'])
+        });
     }
 
-    async productNameStep(step) {
-        step.values.choice = step.result.value;
+    async gatherDetailsStep(step) {
+        step.values.selectedOption = step.result.value;
 
-        switch(step.values.choice) {
-            case "Consultar Pedidos":
-            case "Extrato de Compras": {
-                return await step.prompt(NAME_PROMPT, 'Digite o seu Id');        
-            }
-            case "Consultar Produtos": {
-                return await step.prompt(NAME_PROMPT, 'Digite o nome do produto');        
-            }
-        }
+        const promptMessage = {
+            'Consultar Pedidos': 'Digite o número do pedido:',
+            'Consultar Produtos': 'Insira o nome do produto:',
+            'Extrato de Compras': 'Forneça o CPF para consulta:'
+        }[step.values.selectedOption];
+
+        return step.prompt(NAME_PROMPT, promptMessage);
     }
 
-    async cartaoNumberStep(step) {
-        step.values.id = step.result;
-        return await step.prompt(CARTAO_NUMBER_PROMPT, 'Digite o numero do cartão');        
-    }
+    async processStep(step) {
+        const option = step.values.selectedOption;
+        const inputData = step.result;
 
-    async confirmStep(step) {
-        switch (step.values.choice) {
-            case "Consultar Pedidos":
-            case "Extrato de Compras": {
-                let id = step.values.id;
-                let cardNumber = step.result;
-                let extrato = new Extrato();
-                let response = await extrato.getExtrato(id, cardNumber);
-                let result = extrato.formatExtrato(response.data);
-                let message = MessageFactory.text(result);
-                await step.context.sendActivity(message);
+        switch (option) {
+            case 'Consultar Pedidos': {
+                const pedido = new Pedido();
+                const response = await pedido.getPedido(inputData);
+
+                if (!response || !response.data) {
+                    await step.context.sendActivity('Pedido não encontrado. Tente novamente.');
+                    return step.replaceDialog(DIALOG_ID);
+                }
+
+                const card = pedido.createPedidoCard(response.data);
+                await step.context.sendActivity({ attachments: [card] });
                 break;
             }
-            case "Consultar Produtos": {
-                let productName = step.values.id;
-                let produto = new Produto();
-                let response = await produto.getProduto(productName);
-                let card = produto.createProductCard(response.data[0]);
+            case 'Consultar Produtos': {
+                const produto = new Produto();
+                const response = await produto.getProduto(inputData);
+
+                if (!response || !response.data) {
+                    await step.context.sendActivity('Produto não encontrado. Verifique e tente novamente.');
+                    return step.replaceDialog(DIALOG_ID);
+                }
+
+                step.values.productDetails = response.data[0];
+                const card = produto.createProductCard(response.data[0]);
                 await step.context.sendActivity({ attachments: [card] });
-                break
+
+                return step.prompt('CONFIRM_PROMPT', 'Deseja adquirir este produto?', ['Sim', 'Não']);
+            }
+            case 'Extrato de Compras': {
+                const extrato = new Extrato();
+                const response = await extrato.getUsuario(inputData);
+
+                if (!response) {
+                    await step.context.sendActivity('Nenhum dado encontrado para este CPF.');
+                    return step.replaceDialog(DIALOG_ID);
+                }
+
+                const card = extrato.createExtratoCard(response);
+                await step.context.sendActivity({ attachments: [card] });
+                break;
             }
         }
+        return step.endDialog();
+    }
 
-        // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
-        return await step.endDialog();
+    async completeStep(step) {
+        if (step.values.selectedOption === 'Consultar Produtos' && step.result === true) {
+            const produto = new Produto();
+            const { productId } = step.values.productDetails;
+
+            return step.prompt(NAME_PROMPT, 'Digite seu CPF para concluir a compra:')
+                .then(cpf => {
+                    return step.prompt(CARD_PROMPT, 'Agora, insira o número do cartão:')
+                        .then(async cardNumber => {
+                            const transaction = await produto.validateTransaction(productId, cpf, cardNumber);
+                            if (!transaction.success) {
+                                await step.context.sendActivity(`Erro na compra: ${transaction.message}`);
+                                return step.replaceDialog(DIALOG_ID);
+                            }
+
+                            const orderCard = produto.createOrderCard(transaction.data);
+                            await step.context.sendActivity({ attachments: [orderCard] });
+                            return step.endDialog();
+                        });
+                });
+        }
+
+        await step.context.sendActivity('Operação concluída.');
+        return step.endDialog();
     }
 }
 
