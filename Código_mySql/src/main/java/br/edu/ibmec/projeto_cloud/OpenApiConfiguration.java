@@ -12,12 +12,12 @@ public class OpenApiConfiguration {
     public OpenAPI apiDocConfig() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("IBMEC - CLOUD")
-                        .description("API de Autorização do Cartão de Credito - Projeto Cloud & Big Data 2024.2")
+                        .title("IBMEC - PROJETO CLOUD")
+                        .description("API de Autorização do Cartão de Credito - Projeto Cloud & Big Data")
                         .version("1.0")
                         .contact(new Contact()
-                                .email("rafael.cruz@professores.ibmec.edu.br")
-                                .name("Rafael Cruz")
+                                .email("larissa.amn@hotmail.com")
+                                .name("Larissa Nobrega")
                         )
                 );
     }
