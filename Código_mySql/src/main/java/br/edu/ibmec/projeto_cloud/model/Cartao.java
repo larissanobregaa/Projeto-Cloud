@@ -1,11 +1,10 @@
 package br.edu.ibmec.projeto_cloud.model;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,26 +23,25 @@ public class Cartao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private boolean desativadoPermanentemente = false;
-
+    @Column
     @NotBlank(message = "Insira um número de cartão válido.")
-    private String numeroCartao;
+    public String numeroCartao;
 
-    private LocalDate dataValidade;
+    @Column
+    public Double limiteCredito = 0.0;
 
-    private Double limiteCredito = 0.0;
-
-    private boolean ativo = true; // Inicialize o ativo aqui
+    @Column
+    public boolean ativo;
 
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "cartao") // Mapeie corretamente o relacionamento
-    private List<Transacao> transacoes = new ArrayList<>();
+    @OneToMany
+    @JoinColumn(referencedColumnName = "id", name = "cartao_id")
+    public List<Transacao> transacoes;
 
-    // Métodos de acesso
     public Usuario getUsuario() {
         return usuario;
     }
@@ -60,11 +58,11 @@ public class Cartao {
         this.limiteCredito = limiteCredito;
     }
 
-    public boolean isAtivo() { // Use isAtivo ao invés de getAtivo
+    public boolean getAtivo() {
         return ativo;
     }
 
-    public void setAtivo(boolean ativo) {
+    public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
     }
 }

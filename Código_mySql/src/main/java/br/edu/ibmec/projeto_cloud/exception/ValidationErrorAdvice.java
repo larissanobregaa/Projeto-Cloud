@@ -17,7 +17,10 @@ public class ValidationErrorAdvice {
     public ValidationMessageErrors validationHandler(MethodArgumentNotValidException e) {
         ValidationMessageErrors response = new ValidationMessageErrors();
         for (FieldError item : e.getFieldErrors()) {
-            response.addError(item.getField(), item.getDefaultMessage());
+            ValidationError validation = new ValidationError();
+            validation.setField(item.getField());
+            validation.setMessage(item.getDefaultMessage());
+            response.getErrors().add(validation);
         }
         return response;
     }
@@ -27,7 +30,10 @@ public class ValidationErrorAdvice {
     @ResponseBody
     public ValidationMessageErrors validationHandlerUsuario(UsuarioException e ) {
         ValidationMessageErrors response = new ValidationMessageErrors();
-        response.addError("exception",e.getMessage());
+        ValidationError error = new ValidationError();
+        error.setField("exception");
+        error.setMessage(e.getMessage());
+        response.getErrors().add(error);
         return response;
     }
 }
