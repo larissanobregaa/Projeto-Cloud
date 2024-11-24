@@ -29,7 +29,7 @@ public class ProductController {
     // GET: Buscar todos os produtos
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = this.service.findAll(); // Método findAll deve ser implementado no ProductService
+        List<Product> products = this.service.findAll(); // Método findAll no ProductService
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
@@ -57,10 +57,10 @@ public class ProductController {
     // PUT: Atualizar um produto pelo ID
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable("id") String id, @Valid @RequestBody Product productDetails) {
-        Optional<Product> optionalProduct = this.service.findById(id); // Método findById deve ser implementado no ProductService
+        Optional<Product> optionalProduct = this.service.findById(id); // Método findById no ProductService
 
-        if (optionalProduct.isPresent()) {
-            Product product = optionalProduct.get();
+        // Verifica se o produto existe
+        return optionalProduct.map(product -> {
             product.setProductName(productDetails.getProductName());
             product.setProductCategory(productDetails.getProductCategory());
             product.setPrice(productDetails.getPrice());
@@ -68,10 +68,8 @@ public class ProductController {
             product.setProductDescription(productDetails.getProductDescription());
             product.setStock(productDetails.getStock());
 
-            Product updatedProduct = this.service.save(product); // Método save atualiza o produto
+            Product updatedProduct = this.service.save(product); // Atualiza e salva o produto
             return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Retorna 404 se o produto não existir
-        }
+        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND)); // Retorna 404 se o produto não existir
     }
 }
