@@ -51,7 +51,7 @@ public class CheckoutService {
         // Autoriza a transação
         TransacaoResponse response = this.autorizar(product, idUsuario, numeroCartao);
         if (!"APROVADO".equals(response.getStatus())) {
-            throw new CheckoutException("Não consegui realizar a compra.");
+            throw new CheckoutException("Não consegui realizar a compra");
         }
 
         // Atualiza estoque
