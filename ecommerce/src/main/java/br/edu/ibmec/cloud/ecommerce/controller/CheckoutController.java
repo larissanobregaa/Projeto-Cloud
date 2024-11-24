@@ -47,5 +47,26 @@ public class CheckoutController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 
     }
+
+    // Método para visualizar compras por produto
+    @GetMapping("/produto/{productId}")
+    public ResponseEntity<List<Order>> getComprasPorProduto(@PathVariable String productId) {
+        List<Order> orders = service.findOrdersByProductId(productId);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    // Método para visualizar compras por cliente
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<Order>> getComprasPorCliente(@PathVariable String clienteId) {
+        List<Order> orders = service.findOrdersByClienteId(clienteId);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    // Método para visualizar compras por cartão
+    @GetMapping("/cartao/{numeroCartao}")
+    public ResponseEntity<List<Order>> getComprasPorCartao(@PathVariable String numeroCartao) {
+        List<Order> orders = service.findOrdersByCartao(numeroCartao);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
     
 }
