@@ -8,5 +8,5 @@ import br.edu.ibmec.cloud.ecommerce.entity.Order;
 
 @Repository
 public interface OrderRepository extends CosmosRepository<Order, String> {
-    
+    int countByUserId(int userId); // contar compras por cliente
 }

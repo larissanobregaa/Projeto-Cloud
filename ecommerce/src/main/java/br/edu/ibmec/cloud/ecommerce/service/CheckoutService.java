@@ -18,7 +18,7 @@ import br.edu.ibmec.cloud.ecommerce.repository.OrderRepository;
 @Service
 @EnableConfigurationProperties(TransactionProperties.class)
 public class CheckoutService {
-    
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -28,38 +28,58 @@ public class CheckoutService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private FraudDetectionService fraudDetectionService; // Serviço de detecção de fraude
+
     public Order checkout(Product product, int idUsuario, String numeroCartao) throws Exception {
-        try {
-            TransacaoResponse response = this.autorizar(product, idUsuario, numeroCartao);
-
-            if (response.getStatus().equals("APROVADO") == false) {
-                throw new CheckoutException("Não consegui realizar a compra");
-            }
-
-            Order order = new Order();
-            order.setOrderId(UUID.randomUUID().toString());
-            order.setDataOrder(LocalDateTime.now());
-            order.setProductId(product.getProductId());
-            order.setUserId(idUsuario);
-            order.setStatus("Produto Comprado");
-            this.orderRepository.save(order);
-            return order;
+        // Verifica limite de compras
+        int comprasCliente = orderRepository.countByUserId(idUsuario);
+        if (comprasCliente >= 5) { // Limite de 5 compras
+            throw new CheckoutException("Limite de compras excedido para este cliente.");
         }
-        catch (Exception e) {
-            //Gera um erro
-            throw new CheckoutException("Não consegui realizar a compra");
+
+        // Verifica disponibilidade de estoque
+        if (product.getStock() <= 0) {
+            throw new CheckoutException("Produto indisponível no estoque.");
         }
+
+        // Proteção contra fraudes
+        if (fraudDetectionService.isFraudulentTransaction(idUsuario, product.getPrice())) {
+            throw new CheckoutException("Transação suspeita de fraude.");
+        }
+
+        // Autoriza a transação
+        TransacaoResponse response = this.autorizar(product, idUsuario, numeroCartao);
+        if (!"APROVADO".equals(response.getStatus())) {
+            throw new CheckoutException("Não consegui realizar a compra.");
+        }
+
+        // Atualiza estoque
+        product.setStock(product.getStock() - 1);
+
+        // Cria e salva o pedido
+        Order order = new Order();
+        order.setOrderId(UUID.randomUUID().toString());
+        order.setDataOrder(LocalDateTime.now());
+        order.setProductId(product.getProductId());
+        order.setUserId(idUsuario);
+        order.setStatus("Produto Comprado");
+        this.orderRepository.save(order);
+
+        return order;
     }
 
     private TransacaoResponse autorizar(Product product, int idUsuario, String numeroCartao) {
         String url = transactionProperties.getTransactionUrl();
         TransacaoRequest request = new TransacaoRequest();
-
         request.setEstabelecimento(transactionProperties.getMerchant());
         request.setIdUsuario(idUsuario);
         request.setNumeroCartao(numeroCartao);
         request.setValor(product.getPrice());
-        ResponseEntity<TransacaoResponse> response = this.restTemplate.postForEntity(url, request, TransacaoResponse.class);
+
+        ResponseEntity<TransacaoResponse> response =
+                this.restTemplate.postForEntity(url, request, TransacaoResponse.class);
+
         return response.getBody();
     }
 }
