@@ -1,10 +1,13 @@
 package br.edu.ibmec.cloud.ecommerce.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,25 +51,25 @@ public class CheckoutController {
 
     }
 
-    // Método para visualizar compras por produto
-    @GetMapping("/produto/{productId}")
-    public ResponseEntity<List<Order>> getComprasPorProduto(@PathVariable String productId) {
-        List<Order> orders = service.findOrdersByProductId(productId);
-        return new ResponseEntity<>(orders, HttpStatus.OK);
-    }
+   // Visualizar compras por produto
+   @GetMapping("/produto/{productId}")
+   public ResponseEntity<List<Order>> getComprasPorProduto(@PathVariable String productId) {
+       List<Order> orders = service.findOrdersByProductId(productId);
+       return new ResponseEntity<>(orders, HttpStatus.OK);
+   }
 
-    // Método para visualizar compras por cliente
-    @GetMapping("/cliente/{clienteId}")
-    public ResponseEntity<List<Order>> getComprasPorCliente(@PathVariable String clienteId) {
-        List<Order> orders = service.findOrdersByClienteId(clienteId);
-        return new ResponseEntity<>(orders, HttpStatus.OK);
-    }
+   // Visualizar compras por cliente
+   @GetMapping("/cliente/{clienteId}")
+   public ResponseEntity<List<Order>> getComprasPorCliente(@PathVariable int clienteId) { // Mudado para int, pois o ID do cliente é inteiro
+       List<Order> orders = service.findOrdersByUserId(clienteId);
+       return new ResponseEntity<>(orders, HttpStatus.OK);
+   }
 
-    // Método para visualizar compras por cartão
-    @GetMapping("/cartao/{numeroCartao}")
-    public ResponseEntity<List<Order>> getComprasPorCartao(@PathVariable String numeroCartao) {
-        List<Order> orders = service.findOrdersByCartao(numeroCartao);
-        return new ResponseEntity<>(orders, HttpStatus.OK);
-    }
+   // Visualizar compras por cartão
+   @GetMapping("/cartao/{numeroCartao}")
+   public ResponseEntity<List<Order>> getComprasPorCartao(@PathVariable String numeroCartao) {
+       List<Order> orders = service.findOrdersByCartao(numeroCartao);
+       return new ResponseEntity<>(orders, HttpStatus.OK);
+   }
     
 }

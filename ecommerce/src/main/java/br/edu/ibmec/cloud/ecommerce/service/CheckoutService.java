@@ -1,6 +1,7 @@
 package br.edu.ibmec.cloud.ecommerce.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,6 @@ public class CheckoutService {
 
     @Autowired
     private TransactionProperties transactionProperties;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Autowired
     private FraudDetectionService fraudDetectionService; // Serviço de detecção de fraude
@@ -81,5 +79,23 @@ public class CheckoutService {
                 this.restTemplate.postForEntity(url, request, TransacaoResponse.class);
 
         return response.getBody();
+    }
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    // Busca compras por produto
+    public List<Order> findOrdersByProductId(String productId) {
+        return orderRepository.findByProductId(productId);
+    }
+
+    // Busca compras por cliente
+    public List<Order> findOrdersByUserId(int userId) {
+        return orderRepository.findByUserId(userId);
+    }
+
+    // Busca compras por cartão
+    public List<Order> findOrdersByCartao(String numeroCartao) {
+        return orderRepository.findByCartao(numeroCartao);
     }
 }
