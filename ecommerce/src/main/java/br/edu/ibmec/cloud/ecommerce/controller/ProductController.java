@@ -13,34 +13,27 @@ import br.edu.ibmec.cloud.ecommerce.service.ProductService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/produtos")
 public class ProductController {
 
     @Autowired
     private ProductService service;
 
-    // POST: Criar um novo produto
+    // Criar um novo produto
     @PostMapping
     public ResponseEntity<Product> create(@Valid @RequestBody Product product) {
         this.service.save(product);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
 
-    // GET: Buscar todos os produtos
-    @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = this.service.findAll(); // Método findAll no ProductService
-        return new ResponseEntity<>(products, HttpStatus.OK);
-    }
-
-    // GET: Buscar produtos por categoria
+    // Buscar produtos por categoria
     @GetMapping(value = "/category/{category}")
     public ResponseEntity<List<Product>> getByCategory(@PathVariable("category") String category) {
         List<Product> products = this.service.findByCategory(category);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    // GET: Buscar produtos por nome
+    // Buscar produtos por nome
     @GetMapping(params = "productName")
     public ResponseEntity<List<Product>> getByProductName(@RequestParam String productName) {
         List<Product> products = this.service.findProductByName(productName);

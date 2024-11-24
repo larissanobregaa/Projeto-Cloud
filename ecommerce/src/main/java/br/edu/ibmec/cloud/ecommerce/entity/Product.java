@@ -10,7 +10,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 @Data
-@Container(containerName = "products")
+@Container(containerName = "produtos")
 public class Product {
 
     @Id
@@ -28,7 +28,5 @@ public class Product {
     private String urlFoto;
 
     private String productDescription;
-
-    @PositiveOrZero(message = "O estoque deve ser zero ou positivo")
-    private int stock; // Novo atributo para controlar estoque
+    
 }
