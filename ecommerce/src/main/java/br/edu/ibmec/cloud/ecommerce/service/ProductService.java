@@ -15,32 +15,27 @@ public class ProductService {
     @Autowired
     private ProductRepository repository;
 
-    // Salvar ou atualizar um produto
     public Product save(Product product) {
         return repository.save(product);
     }
 
-    // Buscar todos os produtos
     public List<Product> findAll() {
         return repository.findAll();
     }
 
-    // Buscar produto por categoria
     public List<Product> findByCategory(String category) {
         return repository.findByProductCategory(category);
     }
 
-    // Buscar produto por nome
     public List<Product> findProductByName(String productName) {
         return repository.findByProductNameContainingIgnoreCase(productName);
     }
 
-    // Buscar produto pelo ID
     public Optional<Product> findById(String id) {
+        System.out.println("Buscando produto com ID: " + id);
         return repository.findById(id);
     }
 
-    // Deletar produto pelo ID
     public void delete(String id) throws Exception {
         if (!repository.existsById(id)) {
             throw new Exception("Produto não encontrado.");

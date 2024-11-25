@@ -1,21 +1,16 @@
 package br.edu.ibmec.cloud.ecommerce.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import br.edu.ibmec.cloud.ecommerce.config.TransactionProperties;
 import br.edu.ibmec.cloud.ecommerce.entity.Order;
@@ -32,15 +27,14 @@ public class CheckoutService {
     private final String baseUrl = "https://projetocloud-cartao-credito-api-cqb9bmaudufzg9ht.centralus-01.azurewebsites.net/";
     private final String merchant = "BOT-COMMERCE";
 
-
     @Autowired
     private OrderRepository orderRepository;
-    
+
     public Order checkout(Product product, String idUsuario, String numeroCartao) throws Exception {
         try {
             TransacaoResponse response = this.autorizar(product, numeroCartao);
 
-            if (response == null || response.equals(""))  {
+            if (response == null || response.equals("")) {
                 throw new Exception("Compra não realizada.");
             }
 
@@ -53,24 +47,23 @@ public class CheckoutService {
             order.setStatus("Seu produto foi comprado com sucesso.");
             this.orderRepository.save(order);
             return order;
-        }
-        catch (Exception e) {
-            throw new Exception("A sua compra não foi realizada.");
+        } catch (Exception e) {
+            throw new Exception("A sua compra não foi realizada.", e);
         }
     }
 
     private TransacaoResponse autorizar(Product product, String numeroCartao) {
         String url = baseUrl + "transacao/autorizar";
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("numero", numeroCartao);
-        body.add("valor", String.valueOf(product.getPrice()));
-        body.add("estabelecimento", merchant);
+        TransacaoRequest requestBody = new TransacaoRequest();
+        requestBody.setNumeroCartao(numeroCartao);
+        requestBody.setEstabelecimento(merchant);
+        requestBody.setValor(product.getPrice());
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+        HttpEntity<TransacaoRequest> request = new HttpEntity<>(requestBody, headers);
 
         ResponseEntity<TransacaoResponse> response = restTemplate.postForEntity(url, request, TransacaoResponse.class);
 
