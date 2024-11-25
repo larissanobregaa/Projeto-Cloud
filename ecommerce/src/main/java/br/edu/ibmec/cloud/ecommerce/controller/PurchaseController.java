@@ -30,8 +30,8 @@ public class PurchaseController {
     }
 
      @GetMapping
-    public ResponseEntity<Purchase> getPurchaseById(@RequestParam String accountId) {
-        Purchase purchase = this.service.findById(accountId);
+    public ResponseEntity<Purchase> getPurchaseById(@RequestParam String idUsuario) {
+        Purchase purchase = this.service.findByUserId(idUsuario);
         return new ResponseEntity<>(purchase, HttpStatus.OK);
     }
 
