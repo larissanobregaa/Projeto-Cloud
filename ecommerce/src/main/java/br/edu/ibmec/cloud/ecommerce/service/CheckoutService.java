@@ -23,7 +23,7 @@ public class CheckoutService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private final String baseUrl = "https://jhanus-gzhqcpheekdahpc6.eastus-01.azurewebsites.net/";
+    private final String baseUrl = "https://projetocloud-cartao-credito-api-cqb9bmaudufzg9ht.centralus-01.azurewebsites.net/";
     private final String merchant = "BOT-COMMERCE";
 
     @Autowired
