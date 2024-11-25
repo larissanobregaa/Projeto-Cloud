@@ -6,29 +6,37 @@ import java.util.List;
 import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.data.annotation.Id; 
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
 @Data
+@NoArgsConstructor
 @Container(containerName = "purchase")
 public class Purchase {
 
-  @Data
-  public static class  Extract {
-    private String transactionId;
-    private String date;
-    private String description;
-    private double amount;
-    
-  }
+    @Id
+    private String purchaseId;
 
-  @Id
-  private String purchaseId;
+    @PartitionKey
+    private String usuarioId;
 
-  @PartitionKey
-  private String usuarioId;
-  private double totalSpent;
-  private LocalDate lastPurchase;
-  private List<Extract> extractList;
-  
+    private double totalSpent;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate lastPurchase;
+
+    private List<Extract> extractList;
+    @Data
+    @NoArgsConstructor
+    public class Extract {
+        private String transactionId;
+
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        private LocalDate date;
+
+        private String description;
+        private double amount;
+    }
 }
