@@ -16,8 +16,8 @@ public class PurchaseService {
     @Autowired
     private PurchaseRepository purchaseRepository;
 
-    public Purchase findByUserId(String idUsuario) {
-        return this.purchaseRepository.findByUsuarioId(idUsuario);
+    public Purchase findByUsuarioId(String usuarioId) {
+        return this.purchaseRepository.findByUsuarioId(usuarioId);
     }
 
     public void save(Purchase purchase) {

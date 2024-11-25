@@ -1,10 +1,10 @@
 package br.edu.ibmec.cloud.ecommerce.repository;
 
-import com.azure.spring.data.cosmos.repository.CosmosRepository;
-
 import br.edu.ibmec.cloud.ecommerce.entity.Purchase;
+import com.azure.spring.data.cosmos.repository.CosmosRepository;
 
 public interface PurchaseRepository extends CosmosRepository<Purchase, String> {
 
-  Purchase findByUsuarioId(String usuarioId);
-} 
+//    List<Purchase> findByPurchaseId(String purchaseId);
+    Purchase findByUsuarioId(String usuarioId);
+}

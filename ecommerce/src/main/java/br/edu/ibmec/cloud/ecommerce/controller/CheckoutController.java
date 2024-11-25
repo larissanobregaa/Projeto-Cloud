@@ -37,7 +37,7 @@ public class CheckoutController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         Product product = optProduct.get();
-        Order order = this.service.checkout(product, request.getIdUsuario(), request.getNumeroCartao());
+        Order order = this.service.checkout(product, request.getUsuarioId(), request.getNumeroCartao());
 
         CheckoutResponse response = new CheckoutResponse();
         response.setDataCompra(order.getDataOrder()); 
