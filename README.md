@@ -1,4 +1,11 @@
 # Projeto-Cloud
+
+Grupo:
+Fernanda Moysés
+Ian Amoedo
+Jorge Felippe Magarão
+Larissa Nobrega
+
 O objetivo deste projeto é a implementação de um aplicativo que autoriza uma transação (cartão de crédito) para uma conta específica. Para isso, o projeto lidará com as seguintes operações:
 1. Criação de conta
 2. Autorização de transação
