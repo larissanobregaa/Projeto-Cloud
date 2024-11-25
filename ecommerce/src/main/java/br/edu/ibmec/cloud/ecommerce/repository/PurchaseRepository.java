@@ -6,5 +6,5 @@ import br.edu.ibmec.cloud.ecommerce.entity.Purchase;
 
 public interface PurchaseRepository extends CosmosRepository<Purchase, String> {
 
-  Purchase findByUserId(String idUsuario);  
+  Purchase findByUsuarioId(String usuarioId);
 } 

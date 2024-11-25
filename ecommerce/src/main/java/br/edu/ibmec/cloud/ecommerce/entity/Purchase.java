@@ -7,7 +7,7 @@ import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 
 import lombok.Data;
-import nonapi.io.github.classgraph.json.Id;
+import org.springframework.data.annotation.Id; 
 
 @Data
 @Container(containerName = "compras")
@@ -26,7 +26,7 @@ public class Purchase {
   private String purchaseId;
 
   @PartitionKey
-  private String idUsuario;
+  private String usuarioId;
   private double totalSpent;
   private LocalDate lastPurchase;
   private List<Extract> extractList;

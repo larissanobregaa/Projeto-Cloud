@@ -17,7 +17,7 @@ public class PurchaseService {
     private PurchaseRepository purchaseRepository;
 
     public Purchase findByUserId(String idUsuario) {
-        return this.purchaseRepository.findByUserId(idUsuario);
+        return this.purchaseRepository.findByUsuarioId(idUsuario);
     }
 
     public void save(Purchase purchase) {
@@ -32,7 +32,7 @@ public class PurchaseService {
         if (optPurchase.isPresent() == false)
             throw new Exception("Não encontrei o produto a ser excluido");
 
-        this.purchaseRepository.deleteById(purchaseId, new PartitionKey(optPurchase.get().getIdUsuario()));
+        this.purchaseRepository.deleteById(purchaseId, new PartitionKey(optPurchase.get().getUsuarioId()));
     }
 
 }

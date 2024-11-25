@@ -49,7 +49,7 @@ public class CheckoutService {
             order.setDataOrder(LocalDateTime.now());
             order.setProductId(product.getProductId());
             order.setProductName(product.getProductName());
-            order.setIdUsuario(idUsuario);
+            order.setUsuarioId(idUsuario);
             order.setStatus("Seu produto foi comprado com sucesso.");
             this.orderRepository.save(order);
             return order;
