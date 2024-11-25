@@ -13,14 +13,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.azure.core.http.HttpHeaders;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
 
 import br.edu.ibmec.cloud.ecommerce.config.TransactionProperties;
 import br.edu.ibmec.cloud.ecommerce.entity.Order;
 import br.edu.ibmec.cloud.ecommerce.entity.Product;
-import br.edu.ibmec.cloud.ecommerce.errorHandler.CheckoutException;
 import br.edu.ibmec.cloud.ecommerce.repository.OrderRepository;
-import io.swagger.v3.oas.models.media.MediaType;
 
 @Service
 @EnableConfigurationProperties(TransactionProperties.class)
