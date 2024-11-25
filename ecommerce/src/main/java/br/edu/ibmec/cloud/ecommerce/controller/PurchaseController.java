@@ -34,10 +34,4 @@ public class PurchaseController {
         Purchase purchase = this.service.findByUserId(idUsuario);
         return new ResponseEntity<>(purchase, HttpStatus.OK);
     }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable("id") String id) throws Exception {
-        this.service.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }  
 }
