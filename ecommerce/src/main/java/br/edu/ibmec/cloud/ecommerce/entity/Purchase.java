@@ -10,7 +10,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id; 
 
 @Data
-@Container(containerName = "compras")
+@Container(containerName = "purchase")
 public class Purchase {
 
   @Data

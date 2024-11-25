@@ -10,7 +10,7 @@ import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 import lombok.Data;
 
 @Data
-@Container(containerName = "ordens")
+@Container(containerName = "orders")
 public class Order {
 
     @Id
