@@ -19,7 +19,7 @@ public class OpenApiConfiguration {
                         .version("1.0")
                         .contact(new Contact()
                                 .email("larissa.amn@hotmail.com")
-                                .name("Larissa Nobrega")
+                                .name("Larissa Nobrega, Felippe Magarão")
                         )
                 );
     }

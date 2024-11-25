@@ -1,8 +1,6 @@
 package br.edu.ibmec.cloud.ecommerce.controller;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,24 +43,5 @@ public class ProductController {
     public ResponseEntity<?> delete(@PathVariable("id") String id) throws Exception {
         this.service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    // PUT: Atualizar um produto pelo ID
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable("id") String id, @Valid @RequestBody Product productDetails) {
-        Optional<Product> optionalProduct = this.service.findById(id); // Método findById no ProductService
-
-        // Verifica se o produto existe
-        return optionalProduct.map(product -> {
-            product.setProductName(productDetails.getProductName());
-            product.setProductCategory(productDetails.getProductCategory());
-            product.setPrice(productDetails.getPrice());
-            product.setUrlFoto(productDetails.getUrlFoto());
-            product.setProductDescription(productDetails.getProductDescription());
-            product.setStock(productDetails.getStock());
-
-            Product updatedProduct = this.service.save(product); // Atualiza e salva o produto
-            return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND)); // Retorna 404 se o produto não existir
     }
 }
