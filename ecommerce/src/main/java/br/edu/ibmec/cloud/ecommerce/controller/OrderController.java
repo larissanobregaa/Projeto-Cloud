@@ -1,5 +1,8 @@
 package br.edu.ibmec.cloud.ecommerce.controller;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +20,9 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping ("/ordens")
+@RequestMapping("/ordens")
 public class OrderController {
-  @Autowired
+    @Autowired
     private OrderService orderService;
 
     @PostMapping
@@ -28,10 +31,25 @@ public class OrderController {
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<Order> getOrderById(@RequestParam String orderId) {
-        Order order = this.orderService.findByOrderId(orderId);
-        return new ResponseEntity<>(order, HttpStatus.OK);
+    @GetMapping("/orders/{userId}")
+    public ResponseEntity<List<Order>> getOrdersByUserId(@PathVariable String userId) {
+        try {
+            List<Order> orders = this.orderService.findOrdersByUserId(userId); // Chama o serviço para buscar os pedidos
+            return new ResponseEntity<>(orders, HttpStatus.OK);
+        } catch (RuntimeException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Retorna 404 caso a exceção seja lançada
+        }
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<List<Order>> getAllOrders() {
+        List<Order> orders = this.orderService.findAllOrders();
+
+        if (orders.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Retorna 204 se a lista estiver vazia
+        }
+
+        return new ResponseEntity<>(orders, HttpStatus.OK); // Retorna 200 com a lista de pedidos
     }
 
     @DeleteMapping("{id}")
@@ -40,5 +58,4 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-  
 }

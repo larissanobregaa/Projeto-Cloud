@@ -19,7 +19,6 @@ public class Purchase {
     private String date;
     private String description;
     private double amount;
-    private double balance;
     
   }
 
@@ -28,11 +27,8 @@ public class Purchase {
 
   @PartitionKey
   private String usuarioId;
-
   private double totalSpent;
-
   private LocalDate lastPurchase;
-
   private List<Extract> extractList;
   
 }

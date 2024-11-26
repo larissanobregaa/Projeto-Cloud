@@ -20,14 +20,21 @@ public class OrderService {
     @Autowired
     OrderRepository orderRepository;
 
-    public Order findByOrderId(String orderId) {
-        return this.orderRepository.findByOrderId(orderId);
+    public List<Order> findOrdersByUserId(String userId) {
+        List<Order> orders = this.orderRepository.findByUsuarioId(userId); // Exemplo de busca por usuarioId
+
+        // Se não encontrar nenhum pedido, lança uma exceção genérica
+        if (orders.isEmpty()) {
+            throw new RuntimeException("No orders found for user ID: " + userId);
+        }
+
+        return orders;
     }
 
-    public List<Order> getAllOrders() {
-        Iterable<Order> iterable = this.orderRepository.findAll();
-        return StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
+    public List<Order> findAllOrders() {
+        return this.orderRepository.findAll();
     }
+    
 
     public void save(Order order) {
         order.setOrderId(UUID.randomUUID().toString());
@@ -38,11 +45,11 @@ public class OrderService {
 
         Optional<Order> optOrder = this.orderRepository.findById(orderId);
 
-        if(optOrder.isPresent() == false) {
+        if (optOrder.isPresent() == false) {
             throw new Exception("Não encontrei o pedido a ser excluido");
         }
 
         this.orderRepository.deleteById(orderId, new PartitionKey(optOrder.get().getOrderId()));
     }
-}
 
+}
