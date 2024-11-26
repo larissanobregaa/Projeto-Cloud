@@ -1,72 +1,98 @@
 package br.edu.ibmec.cloud.ecommerce.service;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
+import br.edu.ibmec.cloud.ecommerce.config.TransactionProperties;
+import br.edu.ibmec.cloud.ecommerce.entity.Ordem;
+import br.edu.ibmec.cloud.ecommerce.entity.Produto;
+import br.edu.ibmec.cloud.ecommerce.errorHandler.CheckoutException;
+import br.edu.ibmec.cloud.ecommerce.repository.OrdemRepository;
+import br.edu.ibmec.cloud.ecommerce.request.TransacaoRequest;
+import br.edu.ibmec.cloud.ecommerce.request.TransacaoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import br.edu.ibmec.cloud.ecommerce.config.TransactionProperties;
-import br.edu.ibmec.cloud.ecommerce.entity.Order;
-import br.edu.ibmec.cloud.ecommerce.entity.Product;
-import br.edu.ibmec.cloud.ecommerce.repository.OrderRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @EnableConfigurationProperties(TransactionProperties.class)
 public class CheckoutService {
-
     @Autowired
     private RestTemplate restTemplate;
 
-    private final String baseUrl = "https://projetocloud-cartao-credito-api-cqb9bmaudufzg9ht.centralus-01.azurewebsites.net/";
-    private final String merchant = "BOT-COMMERCE";
+    @Autowired
+    private TransactionProperties transactionProperties;
 
     @Autowired
-    private OrderRepository orderRepository;
+    private OrdemRepository ordemRepository;
 
-    public Order checkout(Product product, String idUsuario, String numeroCartao) throws Exception {
+    public Ordem checkout( String usuarioId, Produto produto, String cartaoId, LocalDateTime dataTransacao) throws Exception{
         try {
-            TransacaoResponse response = this.autorizar(product, numeroCartao);
+            TransacaoResponse response = this.autorizar(usuarioId, produto, cartaoId, dataTransacao);
 
-            if (response == null || response.equals("")) {
-                throw new Exception("Compra não realizada.");
+            if (response.getStatus().equals("APROVADO") == false) {
+                throw new CheckoutException("A sua compra foi reprovada: " + response.getErro());
             }
 
-            Order order = new Order();
-            order.setOrderId(UUID.randomUUID().toString());
-            order.setDataOrder(LocalDateTime.now());
-            order.setProductId(product.getProductId());
-            order.setProductName(product.getProductName());
-            order.setUsuarioId(idUsuario);
-            order.setStatus("Seu produto foi comprado com sucesso.");
-            this.orderRepository.save(order);
-            return order;
+            Ordem ordem = new Ordem();
+            ordem.setOrdemId(UUID.randomUUID().toString());
+            ordem.setDataTransacao(LocalDateTime.now());
+            ordem.setProdutoId(produto.getProdutoId());
+            ordem.setUsuarioId(usuarioId);
+            ordem.setStatus("Produto Comprado");
+            this.ordemRepository.save(ordem);
+            return ordem;
+            
+        } catch (CheckoutException e) {
+            throw e;
         } catch (Exception e) {
-            throw new Exception("A sua compra não foi realizada.", e);
+            String detailedMessage = extractErrorMessage(e.getMessage());
+            throw new CheckoutException("Erro ao processar a compra: " + detailedMessage);
         }
     }
 
-    private TransacaoResponse autorizar(Product product, String numeroCartao) {
-        String url = baseUrl + "transacao/autorizar";
+    private TransacaoResponse autorizar(String usuarioId, Produto produto, String cartaoId, LocalDateTime dataTransacao) {
+        String url = transactionProperties.getTransactionUrl();
+        TransacaoRequest request = new TransacaoRequest();
 
-        TransacaoRequest requestBody = new TransacaoRequest();
-        requestBody.setNumeroCartao(numeroCartao);
-        requestBody.setEstabelecimento(merchant);
-        requestBody.setValor(product.getPrice());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<TransacaoRequest> request = new HttpEntity<>(requestBody, headers);
-
-        ResponseEntity<TransacaoResponse> response = restTemplate.postForEntity(url, request, TransacaoResponse.class);
-
+        request.setEstabelecimento(transactionProperties.getMerchant());
+        request.setUsuarioId(usuarioId);
+        request.setCartaoId(cartaoId);
+        request.setValor(produto.getPreco());
+        request.setDataTransacao(dataTransacao);
+        ResponseEntity<TransacaoResponse> response = this.restTemplate.postForEntity(url, request, TransacaoResponse.class);
         return response.getBody();
+    }
+
+    public static String extractErrorMessage(String response) {
+        try {
+            System.out.println("Response: " + response);
+            // Localizar o início do JSON na string
+            int jsonStartIndex = response.indexOf("{");
+            if (jsonStartIndex == -1) {
+                return "Formato inválido. Não foi encontrado um JSON.";
+            }
+
+            // Isolar a parte do JSON
+            String jsonString = response.substring(jsonStartIndex);
+
+            // Usar o ObjectMapper para processar o JSON
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode root = objectMapper.readTree(jsonString);
+
+            // Navegar até "errors" e pegar o primeiro "message"
+            JsonNode errors = root.path("errors");
+            if (errors.isArray() && errors.size() > 0) {
+                JsonNode firstError = errors.get(0);
+                return firstError.path("message").asText();
+            }
+
+            return "Nenhuma mensagem encontrada em 'errors'.";
+        } catch (Exception e) {
+            return "Erro ao processar a mensagem: " + e.getMessage();
+        }
     }
 }

@@ -1,13 +1,13 @@
 package br.edu.ibmec.cloud.ecommerce.request;
 
 import java.time.LocalDateTime;
-
 import lombok.Data;
 
 @Data
-public class CheckoutRequest {
+public class TransacaoRequest {
     private String usuarioId;
-    private String produtoId;
     private String cartaoId;
+    private String estabelecimento;
+    private Double valor;
     private LocalDateTime dataTransacao;
 }
