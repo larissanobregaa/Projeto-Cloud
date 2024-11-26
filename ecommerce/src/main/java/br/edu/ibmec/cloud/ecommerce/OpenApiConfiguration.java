@@ -18,8 +18,8 @@ public class OpenApiConfiguration {
                         .description("API de Gerencia e Checkout de Produto - Projeto Cloud & Big Data 2024.2")
                         .version("1.0")
                         .contact(new Contact()
-                                .email("rafael.cruz@professores.ibmec.edu.br")
-                                .name("Rafael Cruz")
+                                .email("alunos.ibmec@gmail.com")
+                                .name("Lari, Ian, Magarao, Fefe")
                         )
                 );
     }

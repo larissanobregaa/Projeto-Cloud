@@ -7,7 +7,6 @@ import org.springframework.data.annotation.Id;
 import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
