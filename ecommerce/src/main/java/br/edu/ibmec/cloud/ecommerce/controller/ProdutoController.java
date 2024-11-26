@@ -41,10 +41,4 @@ public class ProdutoController {
         List<Produto> produtos = this.service.buscarTodosProdutos(); 
         return new ResponseEntity<>(produtos, HttpStatus.OK);
     }
-
-    @DeleteMapping("{produtoId}")
-    public ResponseEntity<Void> delete(@PathVariable("produtoId") String produtoId) throws Exception{
-        this.service.delete(produtoId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 }
