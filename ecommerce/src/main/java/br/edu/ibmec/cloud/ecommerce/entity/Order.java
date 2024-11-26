@@ -7,16 +7,18 @@ import org.springframework.data.annotation.Id;
 import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-@Container(containerName = "ordens")
-public class Ordem {
+@Container(containerName = "orders")
+public class Order {
     @Id
-    private String ordemId;
+    private String orderId;
     @PartitionKey
-    private String produtoId;
-    private String usuarioId;
-    private LocalDateTime dataTransacao;
+    private String productId;
+    private int userId;
+    private LocalDateTime dataOrder;
     private String status;
+    
 }

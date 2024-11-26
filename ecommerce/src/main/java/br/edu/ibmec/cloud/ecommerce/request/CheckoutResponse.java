@@ -6,10 +6,9 @@ import lombok.Data;
 
 @Data
 public class CheckoutResponse {
-    private String produtoId;
+    private String productId;
     private String status;
-    private LocalDateTime dataTransacao;
-    private String erro;
-    private String ordemId;
+    private LocalDateTime dataCompra;
+    private String orderId;
 
 }

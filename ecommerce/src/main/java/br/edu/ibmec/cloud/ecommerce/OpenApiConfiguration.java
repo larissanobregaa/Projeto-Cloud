@@ -14,12 +14,12 @@ public class OpenApiConfiguration {
     public OpenAPI apiDocConfig() {
          return new OpenAPI()
                 .info(new Info()
-                        .title("IBMEC - PROJETO CLOUD")
-                        .description("API de Gerencia e Checkout de Produto - Projeto Cloud & Big Data")
+                        .title("IBMEC - CLOUD")
+                        .description("API de Gerencia e Checkout de Produto - Projeto Cloud & Big Data 2024.2")
                         .version("1.0")
                         .contact(new Contact()
-                                .email("larissa.amn@hotmail.com")
-                                .name("Larissa Nobrega, Felippe Magarão")
+                                .email("rafael.cruz@professores.ibmec.edu.br")
+                                .name("Rafael Cruz")
                         )
                 );
     }

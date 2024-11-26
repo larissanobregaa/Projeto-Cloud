@@ -1,25 +1,25 @@
 package br.edu.ibmec.cloud.ecommerce.service;
 
-import br.edu.ibmec.cloud.ecommerce.config.TransactionProperties;
-import br.edu.ibmec.cloud.ecommerce.entity.Ordem;
-import br.edu.ibmec.cloud.ecommerce.entity.Produto;
-import br.edu.ibmec.cloud.ecommerce.errorHandler.CheckoutException;
-import br.edu.ibmec.cloud.ecommerce.repository.OrdemRepository;
-import br.edu.ibmec.cloud.ecommerce.request.TransacaoRequest;
-import br.edu.ibmec.cloud.ecommerce.request.TransacaoResponse;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDateTime;
-import java.util.UUID;
+
+import br.edu.ibmec.cloud.ecommerce.config.CosmosProperties;
+import br.edu.ibmec.cloud.ecommerce.config.TransactionProperties;
+import br.edu.ibmec.cloud.ecommerce.entity.Order;
+import br.edu.ibmec.cloud.ecommerce.entity.Product;
+import br.edu.ibmec.cloud.ecommerce.errorHandler.CheckoutException;
+import br.edu.ibmec.cloud.ecommerce.repository.OrderRepository;
 
 @Service
 @EnableConfigurationProperties(TransactionProperties.class)
 public class CheckoutService {
+    
     @Autowired
     private RestTemplate restTemplate;
 
@@ -27,72 +27,40 @@ public class CheckoutService {
     private TransactionProperties transactionProperties;
 
     @Autowired
-    private OrdemRepository ordemRepository;
+    private OrderRepository orderRepository;
 
-    public Ordem checkout( String usuarioId, Produto produto, String cartaoId, LocalDateTime dataTransacao) throws Exception{
+    public Order checkout(Product product, int idUsuario, String numeroCartao) throws Exception {
         try {
-            TransacaoResponse response = this.autorizar(usuarioId, produto, cartaoId, dataTransacao);
+            TransacaoResponse response = this.autorizar(product, idUsuario, numeroCartao);
 
             if (response.getStatus().equals("APROVADO") == false) {
-                throw new CheckoutException("A sua compra foi reprovada: " + response.getErro());
+                throw new CheckoutException("Não consegui realizar a compra");
             }
 
-            Ordem ordem = new Ordem();
-            ordem.setOrdemId(UUID.randomUUID().toString());
-            ordem.setDataTransacao(LocalDateTime.now());
-            ordem.setProdutoId(produto.getProdutoId());
-            ordem.setUsuarioId(usuarioId);
-            ordem.setStatus("Produto Comprado");
-            this.ordemRepository.save(ordem);
-            return ordem;
-            
-        } catch (CheckoutException e) {
-            throw e;
-        } catch (Exception e) {
-            String detailedMessage = extractErrorMessage(e.getMessage());
-            throw new CheckoutException("Erro ao processar a compra: " + detailedMessage);
+            Order order = new Order();
+            order.setOrderId(UUID.randomUUID().toString());
+            order.setDataOrder(LocalDateTime.now());
+            order.setProductId(product.getProductId());
+            order.setUserId(idUsuario);
+            order.setStatus("Produto Comprado");
+            this.orderRepository.save(order);
+            return order;
+        }
+        catch (Exception e) {
+            //Gera um erro
+            throw new CheckoutException("Não consegui realizar a compra");
         }
     }
 
-    private TransacaoResponse autorizar(String usuarioId, Produto produto, String cartaoId, LocalDateTime dataTransacao) {
+    private TransacaoResponse autorizar(Product product, int idUsuario, String numeroCartao) {
         String url = transactionProperties.getTransactionUrl();
         TransacaoRequest request = new TransacaoRequest();
 
-        request.setEstabelecimento(transactionProperties.getMerchant());
-        request.setUsuarioId(usuarioId);
-        request.setCartaoId(cartaoId);
-        request.setValor(produto.getPreco());
-        request.setDataTransacao(dataTransacao);
+        request.setComerciante(transactionProperties.getMerchant());
+        request.setIdUsuario(idUsuario);
+        request.setNumeroCartao(numeroCartao);
+        request.setValor(product.getPrice());
         ResponseEntity<TransacaoResponse> response = this.restTemplate.postForEntity(url, request, TransacaoResponse.class);
         return response.getBody();
-    }
-
-    public static String extractErrorMessage(String response) {
-        try {
-            System.out.println("Response: " + response);
-            // Localizar o início do JSON na string
-            int jsonStartIndex = response.indexOf("{");
-            if (jsonStartIndex == -1) {
-                return "Formato inválido. Não foi encontrado um JSON.";
-            }
-
-            // Isolar a parte do JSON
-            String jsonString = response.substring(jsonStartIndex);
-
-            // Usar o ObjectMapper para processar o JSON
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode root = objectMapper.readTree(jsonString);
-
-            // Navegar até "errors" e pegar o primeiro "message"
-            JsonNode errors = root.path("errors");
-            if (errors.isArray() && errors.size() > 0) {
-                JsonNode firstError = errors.get(0);
-                return firstError.path("message").asText();
-            }
-
-            return "Nenhuma mensagem encontrada em 'errors'.";
-        } catch (Exception e) {
-            return "Erro ao processar a mensagem: " + e.getMessage();
-        }
     }
 }
